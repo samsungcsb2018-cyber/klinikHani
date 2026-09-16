@@ -1,0 +1,1707 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Klinik Hani - RME & Clinic Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-app: #f8fafc;
+      --bg-sidebar: #ffffff;
+      --bg-card: #ffffff;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --text-subtle: #94a3b8;
+      --border-color: #e2e8f0;
+      --border-light: #f1f5f9;
+      --success: #10b981;
+      --success-light: #ecfdf5;
+      --warning: #f59e0b;
+      --warning-light: #fffbeb;
+      --danger: #ef4444;
+      --danger-light: #fef2f2;
+      --purple: #8b5cf6;
+      --purple-light: #f5f3ff;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-pill: 9999px;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+      --shadow-dropdown: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif; -webkit-font-smoothing: antialiased; }
+    body { background-color: var(--bg-app); color: var(--text-main); display: flex; min-height: 100vh; overflow-x: hidden; }
+
+    #login-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .login-card { background: #ffffff; border-radius: var(--radius-lg); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); width: 100%; max-width: 440px; padding: 36px 32px; }
+    .login-brand { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 24px; }
+    .login-brand-icon { width: 42px; height: 42px; background: var(--primary); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; color: #ffffff; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35); }
+
+    aside.sidebar { width: 260px; background: var(--bg-sidebar); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; flex-shrink: 0; position: sticky; top: 0; height: 100vh; z-index: 40; transition: transform 0.25s ease; }
+    .sidebar-brand { padding: 24px 20px 16px 20px; display: flex; align-items: center; gap: 12px; }
+    .brand-icon-wrap { width: 38px; height: 38px; background: var(--primary); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; color: #ffffff; font-weight: 800; font-size: 1.15rem; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3); }
+    .brand-name { font-size: 1.25rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.02em; }
+    .clinic-badge-box { margin: 0 16px 16px 16px; padding: 10px 14px; background: var(--bg-app); border: 1px solid var(--border-color); border-radius: var(--radius-md); display: flex; align-items: center; gap: 10px; }
+    .clinic-badge-box .icon { font-size: 1rem; color: var(--text-muted); }
+    .clinic-badge-box .title { font-size: 0.82rem; font-weight: 700; color: var(--text-main); line-height: 1.2; }
+    .clinic-badge-box .subtitle { font-size: 0.72rem; color: var(--text-subtle); }
+    .sidebar-menu { flex: 1; overflow-y: auto; padding: 0 12px 20px 12px; }
+    .menu-category { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-subtle); padding: 16px 12px 8px 12px; }
+    .nav-link { display: flex; align-items: center; gap: 12px; padding: 10px 14px; color: var(--text-muted); text-decoration: none; font-size: 0.88rem; font-weight: 600; border-radius: var(--radius-md); cursor: pointer; border: none; background: transparent; width: 100%; text-align: left; transition: all 0.15s ease; margin-bottom: 2px; }
+    .nav-link:hover { background: var(--bg-app); color: var(--text-main); }
+    .nav-link.active { background: var(--primary-light); color: var(--primary); font-weight: 700; }
+    .nav-link.active .icon { color: var(--primary); }
+    .nav-link .icon { font-size: 1.1rem; width: 20px; display: flex; align-items: center; justify-content: center; }
+
+    .app-main { flex: 1; display: flex; flex-direction: column; min-width: 0; overflow-y: auto; }
+    header.topbar { height: 70px; background: #ffffff; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; padding: 0 28px; position: sticky; top: 0; z-index: 30; }
+    .topbar-left { display: flex; align-items: center; gap: 16px; }
+    .btn-circle { width: 36px; height: 36px; border-radius: var(--radius-pill); border: 1px solid var(--border-color); background: #ffffff; display: inline-flex; align-items: center; justify-content: center; color: var(--text-muted); cursor: pointer; transition: all 0.15s; }
+    .btn-circle:hover { background: var(--bg-app); color: var(--text-main); }
+    .page-title { font-size: 1.35rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.02em; }
+    .topbar-right { display: flex; align-items: center; gap: 14px; }
+
+    .sync-indicator-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; border-radius: var(--radius-pill); font-size: 0.76rem; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+    .sync-indicator-pill:hover { background: #d1fae5; }
+    .sync-dot { width: 7px; height: 7px; border-radius: 50%; background: #10b981; box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2); animation: pulseSync 2s infinite; }
+    @keyframes pulseSync { 0% { transform: scale(0.95); opacity: 0.7; } 50% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 8px rgba(16, 185, 129, 0.6); } 100% { transform: scale(0.95); opacity: 0.7; } }
+
+    .search-box-pill { display: flex; align-items: center; gap: 10px; background: var(--bg-app); border: 1px solid var(--border-color); border-radius: var(--radius-pill); padding: 8px 16px; width: 280px; }
+    .search-box-pill input { border: none; background: transparent; outline: none; font-size: 0.85rem; color: var(--text-main); width: 100%; }
+    .btn-add-circle { width: 36px; height: 36px; border-radius: var(--radius-pill); background: var(--primary); color: #ffffff; border: none; display: inline-flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35); }
+    .user-profile-pill { display: flex; align-items: center; gap: 10px; padding: 4px 12px 4px 4px; border-radius: var(--radius-pill); background: var(--bg-app); border: 1px solid var(--border-color); }
+    .user-avatar { width: 34px; height: 34px; border-radius: var(--radius-pill); background: #bfdbfe; display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--primary-hover); font-size: 0.85rem; }
+    .user-info { text-align: left; line-height: 1.2; }
+    .user-name { font-size: 0.82rem; font-weight: 700; color: var(--text-main); }
+    .user-role { font-size: 0.72rem; color: var(--text-subtle); }
+    .btn-logout { background: transparent; border: none; color: var(--danger); font-size: 0.8rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px; padding: 6px 10px; border-radius: var(--radius-sm); transition: background 0.15s; }
+    .btn-logout:hover { background: var(--danger-light); }
+
+    .content-container { padding: 28px; max-width: 1440px; width: 100%; margin: 0 auto; }
+    .card-zendenta { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); padding: 24px; margin-bottom: 24px; }
+    
+    .asset-summary-row { display: flex; align-items: center; gap: 40px; padding: 8px 0; flex-wrap: wrap; }
+    .asset-value-col { display: flex; align-items: center; gap: 16px; }
+    .asset-icon-circle { width: 44px; height: 44px; border-radius: var(--radius-pill); background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; }
+    .asset-title { font-size: 0.75rem; font-weight: 700; color: var(--text-subtle); text-transform: uppercase; letter-spacing: 0.05em; }
+    .asset-amount { font-size: 2rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.03em; line-height: 1.1; margin-top: 2px; }
+    .divider-vert { width: 1px; height: 50px; background: var(--border-color); }
+    .product-breakdown-col { flex: 1; min-width: 280px; }
+    .product-count-header { font-size: 1.1rem; font-weight: 700; color: var(--text-main); margin-bottom: 8px; }
+    .segmented-bar { width: 100%; height: 8px; border-radius: var(--radius-pill); background: var(--border-color); display: flex; overflow: hidden; margin-bottom: 10px; gap: 2px; }
+    .seg-instock { background: #14b8a6; } .seg-lowstock { background: #f59e0b; } .seg-outstock { background: #f43f5e; }
+    .segmented-legend { display: flex; align-items: center; gap: 18px; font-size: 0.78rem; color: var(--text-muted); flex-wrap: wrap; }
+    .legend-item { display: flex; align-items: center; gap: 6px; }
+    .legend-dot { width: 8px; height: 8px; border-radius: var(--radius-pill); }
+    .legend-dot.in { background: #14b8a6; } .legend-dot.low { background: #f59e0b; } .legend-dot.out { background: #f43f5e; }
+
+    .zendenta-tabs { display: flex; align-items: center; gap: 28px; border-bottom: 1px solid var(--border-color); margin-top: 18px; margin-bottom: 24px; }
+    .zendenta-tab-btn { padding: 0 0 12px 0; background: transparent; border: none; font-size: 0.92rem; font-weight: 600; color: var(--text-muted); cursor: pointer; position: relative; }
+    .zendenta-tab-btn.active { color: var(--primary); font-weight: 700; }
+    .zendenta-tab-btn.active::after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 2px; background: var(--primary); border-radius: 2px 2px 0 0; }
+
+    .filter-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+    .filter-left { display: flex; align-items: center; gap: 12px; flex: 1; max-width: 420px; }
+    .filter-right { display: flex; align-items: center; gap: 12px; }
+
+    .btn-zendenta { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 9px 18px; font-size: 0.85rem; font-weight: 600; border-radius: var(--radius-sm); cursor: pointer; border: 1px solid transparent; transition: all 0.15s ease; white-space: nowrap; }
+    .btn-zendenta-primary { background: var(--primary); color: #ffffff; box-shadow: 0 1px 3px rgba(37, 99, 235, 0.2); }
+    .btn-zendenta-primary:hover { background: var(--primary-hover); }
+    .btn-zendenta-outline { background: #ffffff; border-color: var(--border-color); color: var(--text-main); }
+    .btn-zendenta-outline:hover { background: var(--bg-app); border-color: #cbd5e1; }
+    .btn-zendenta-sm { padding: 6px 14px; font-size: 0.8rem; }
+    .btn-receive { background: #f1f5f9; color: var(--text-muted); border: 1px solid var(--border-color); padding: 6px 14px; border-radius: var(--radius-sm); font-size: 0.8rem; font-weight: 600; cursor: pointer; }
+    .btn-receive:hover { background: #e2e8f0; color: var(--text-main); }
+
+    .table-wrapper { background: #ffffff; border: 1px solid var(--border-color); border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-card); }
+    table.zendenta-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem; }
+    table.zendenta-table th { background: #fafbfc; color: var(--text-subtle); font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; padding: 14px 18px; border-bottom: 1px solid var(--border-color); white-space: nowrap; }
+    table.zendenta-table td { padding: 16px 18px; border-bottom: 1px solid var(--border-light); color: var(--text-main); vertical-align: middle; }
+    table.zendenta-table tr:hover td { background: #f8fafc; }
+
+    .status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: var(--radius-pill); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase; }
+    .status-pill.complete { background: var(--success-light); color: var(--success); }
+    .status-pill.pending { background: #f1f5f9; color: var(--text-muted); }
+    .status-pill.partially { background: var(--purple-light); color: var(--purple); }
+    .status-pill.warning { background: var(--warning-light); color: var(--warning); }
+    .status-pill.danger { background: var(--danger-light); color: var(--danger); }
+
+    .mini-progress-box { display: flex; align-items: center; gap: 10px; min-width: 140px; }
+    .mini-bar-track { flex: 1; height: 5px; border-radius: var(--radius-pill); background: var(--border-color); overflow: hidden; }
+    .mini-bar-fill { height: 100%; background: var(--primary); border-radius: var(--radius-pill); }
+    .mini-bar-label { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); width: 28px; text-align: right; }
+
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-label { font-size: 0.82rem; font-weight: 600; color: var(--text-muted); }
+    .form-control { background: #ffffff; border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 10px 14px; font-size: 0.88rem; color: var(--text-main); outline: none; }
+    .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+    textarea.form-control { min-height: 90px; resize: vertical; }
+
+    .patient-toggle { display: inline-flex; background: var(--bg-app); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 4px; gap: 6px; margin-bottom: 20px; }
+    .toggle-btn { padding: 8px 16px; font-size: 0.82rem; font-weight: 600; color: var(--text-muted); border-radius: var(--radius-sm); border: none; background: transparent; cursor: pointer; }
+    .toggle-btn.active { background: #ffffff; color: var(--primary); font-weight: 700; box-shadow: var(--shadow-sm); }
+
+    .lookup-box { position: relative; }
+    .lookup-dropdown { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: #ffffff; border: 1px solid var(--border-color); border-radius: var(--radius-sm); box-shadow: var(--shadow-dropdown); z-index: 50; max-height: 220px; overflow-y: auto; display: none; }
+    .lookup-item { padding: 10px 14px; border-bottom: 1px solid var(--border-light); cursor: pointer; }
+    .lookup-item:hover { background: var(--primary-light); }
+
+    .queue-hero-card { background: linear-gradient(135deg, #1e3a8a, #2563eb); color: #ffffff; border-radius: var(--radius-lg); padding: 40px; text-align: center; box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.4); }
+    .queue-hero-no { font-size: 5.5rem; font-weight: 900; letter-spacing: -0.04em; margin: 12px 0; line-height: 1; }
+
+    .modal-backdrop { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(4px); z-index: 100; display: none; align-items: center; justify-content: center; padding: 20px; }
+    .modal-content { background: #ffffff; border-radius: var(--radius-lg); box-shadow: var(--shadow-dropdown); max-width: 520px; width: 100%; padding: 24px; max-height: 90vh; overflow-y: auto; }
+
+    #toast-wrap { position: fixed; bottom: 24px; right: 24px; z-index: 999999; display: flex; flex-direction: column; gap: 10px; }
+    .toast-pill { background: #ffffff; color: var(--text-main); padding: 12px 20px; border-radius: var(--radius-pill); box-shadow: var(--shadow-dropdown); border-left: 5px solid var(--primary); font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+
+    .receipt-paper { background: #ffffff; border: 1px dashed var(--border-color); padding: 20px; border-radius: var(--radius-sm); font-family: 'Courier New', Courier, monospace; font-size: 0.85rem; line-height: 1.4; }
+
+    .cppt-pdf-sheet { position: relative; background: #ffffff; color: #0f172a; padding: 28px 24px; border-radius: var(--radius-md); font-size: 0.82rem; line-height: 1.4; overflow: hidden; }
+    .cppt-watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-30deg); font-size: 2.2rem; font-weight: 900; color: rgba(15, 23, 42, 0.045); text-transform: uppercase; letter-spacing: 0.12em; white-space: nowrap; pointer-events: none; user-select: none; z-index: 1; text-align: center; }
+    .cppt-pdf-header { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 16px; }
+    .cppt-kop-clinic { display: flex; align-items: center; gap: 12px; }
+    .cppt-kop-clinic h3 { font-size: 1.2rem; font-weight: 800; color: #0f172a; }
+    .cppt-kop-clinic p { font-size: 0.72rem; color: #475569; }
+    .cppt-patient-info-box { position: relative; z-index: 2; display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: var(--radius-sm); padding: 12px; margin-bottom: 16px; font-size: 0.8rem; }
+    .cppt-print-table { position: relative; z-index: 2; width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 0.78rem; }
+    .cppt-print-table th, .cppt-print-table td { border: 1px solid #94a3b8; padding: 8px 10px; vertical-align: top; }
+    .cppt-print-table th { background: #f1f5f9; font-weight: 800; color: #1e293b; text-transform: uppercase; font-size: 0.72rem; text-align: center; }
+
+    @media print {
+      body * { visibility: hidden !important; }
+      #print-patient-cppt-area, #print-patient-cppt-area * { visibility: visible !important; }
+      #print-patient-cppt-area { position: absolute !important; left: 0 !important; top: 0 !important; width: 100% !important; margin: 0 !important; padding: 12mm 10mm !important; background: #ffffff !important; color: #000000 !important; box-shadow: none !important; }
+      .cppt-watermark { display: block !important; color: rgba(0, 0, 0, 0.055) !important; -webkit-print-color-adjust: exact !important; }
+      .no-print { display: none !important; }
+    }
+
+    body.role-display aside.sidebar { display: none !important; }
+    body.role-display .topbar-left .btn-circle, body.role-display .search-box-pill, body.role-display .btn-add-circle { display: none !important; }
+    body.role-display .queue-admin-controls { display: none !important; }
+
+    @media (max-width: 1024px) {
+      aside.sidebar { position: fixed; left: -260px; }
+      aside.sidebar.mobile-open { left: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Login Overlay -->
+  <div id="login-overlay">
+    <div class="login-card">
+      <div class="login-brand">
+        <div class="login-brand-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M2 12h20M7 7l10 10M17 7L7 17"></path></svg>
+        </div>
+        <div>
+          <h2 style="font-size: 1.35rem; font-weight: 800; color: #0f172a; line-height: 1.1;">Klinik Hani</h2>
+          <span style="font-size: 0.75rem; color: #64748b; font-weight: 600;">Sistem RME & Display Antrian</span>
+        </div>
+      </div>
+      <form id="login-form" onsubmit="event.preventDefault(); handleLogin();">
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label class="form-label" style="font-weight: 700; color: #334155;">Username</label>
+          <input type="text" id="login-username" class="form-control" required placeholder="Masukkan username..." autocomplete="username">
+        </div>
+        <div class="form-group" style="margin-bottom: 20px;">
+          <label class="form-label" style="font-weight: 700; color: #334155;">Password</label>
+          <input type="password" id="login-password" class="form-control" required placeholder="Masukkan password..." autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn-zendenta btn-zendenta-primary" style="width: 100%; padding: 12px; font-size: 0.95rem;">🔐 Masuk ke Sistem</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon-wrap">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20M7 7l10 10M17 7L7 17"></path></svg>
+      </div>
+      <div class="brand-name" id="sidebar-brand-name">Klinik Hani</div>
+    </div>
+    <div class="clinic-badge-box">
+      <div class="icon">🏥</div>
+      <div>
+        <div class="title" id="clinic-badge-title">Klinik Hani Purworejo</div>
+        <div class="subtitle" id="clinic-badge-subtitle">Jl. Raya Kutoarjo, Purworejo</div>
+      </div>
+    </div>
+    <div class="sidebar-menu">
+      <div class="menu-category">Dashboard</div>
+      <button class="nav-link" id="nav-dashboard" onclick="switchTab('dashboard')"><span class="icon">📊</span> Ringkasan Operasional</button>
+      <div class="menu-category">Clinic & Patient</div>
+      <button class="nav-link" id="nav-input-rme" onclick="switchTab('input-rme')"><span class="icon">📝</span> Input Rekam Medis</button>
+      <button class="nav-link" id="nav-riwayat-rme" onclick="switchTab('riwayat-rme')"><span class="icon">📁</span> Riwayat Pasien (RME)</button>
+      <button class="nav-link" id="nav-askep" onclick="switchTab('askep')"><span class="icon">🩺</span> Input Asuhan (CPPT)</button>
+      <button class="nav-link" id="nav-riwayat-cppt" onclick="switchTab('riwayat-cppt')"><span class="icon">📋</span> Riwayat CPPT</button>
+      <button class="nav-link" id="nav-antrian" onclick="switchTab('antrian')"><span class="icon">📢</span> Display Antrian</button>
+      <div class="menu-category">Finance & Kasir</div>
+      <button class="nav-link" id="nav-kasir" onclick="switchTab('kasir')"><span class="icon">💳</span> Kasir & Billing</button>
+      <div class="menu-category">Physical Asset</div>
+      <button class="nav-link active" id="nav-gudang-obat" onclick="switchTab('gudang-obat')"><span class="icon">💊</span> Stocks / Gudang Obat</button>
+    </div>
+  </aside>
+
+  <!-- Main App -->
+  <main class="app-main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="btn-circle" onclick="toggleSidebar()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg></button>
+        <h1 class="page-title" id="topbar-page-title">Stocks</h1>
+      </div>
+      <div class="topbar-right">
+        <div class="sync-indicator-pill" id="sync-pill" onclick="triggerManualSync()" title="Sinkronisasi Otomatis Setiap 1 Menit Tanpa Logout"><span class="sync-dot"></span><span id="sync-status-text">Live: 60s</span></div>
+        <div class="search-box-pill"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg><input type="text" id="global-search-input" placeholder="Search for anything here..." oninput="handleGlobalSearch(this.value)"></div>
+        <button class="btn-add-circle" onclick="quickAddAction()">+</button>
+        <div class="user-profile-pill">
+          <div class="user-avatar" id="header-avatar">HR</div>
+          <div class="user-info">
+            <div class="user-name" id="header-user-name">Bd. Hani Rahmawati</div>
+            <div class="user-role" id="header-user-role">Super Admin / Bidan</div>
+          </div>
+        </div>
+        <button class="btn-logout" onclick="handleLogout()">🚪 Logout</button>
+      </div>
+    </header>
+
+    <div class="content-container">
+
+      <!-- TAB GUDANG OBAT -->
+      <section id="tab-gudang-obat" class="tab-pane">
+        <div class="card-zendenta">
+          <div class="asset-summary-row">
+            <div class="asset-value-col">
+              <div class="asset-icon-circle"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v12M15 9.5a3.5 3.5 0 0 0-7 0c0 2 1.5 3 3.5 3.5s3.5 1.5 3.5 3.5a3.5 3.5 0 0 1-7 0"></path></svg></div>
+              <div><div class="asset-title">TOTAL ASSET VALUE</div><div class="asset-amount" id="stock-total-asset">Rp 2.455.000</div></div>
+            </div>
+            <div class="divider-vert"></div>
+            <div class="product-breakdown-col">
+              <div class="product-count-header"><span id="stock-product-count">15</span> product</div>
+              <div class="segmented-bar"><div class="seg-instock" id="bar-instock" style="width: 67%;"></div><div class="seg-lowstock" id="bar-lowstock" style="width: 20%;"></div><div class="seg-outstock" id="bar-outstock" style="width: 13%;"></div></div>
+              <div class="segmented-legend">
+                <div class="legend-item"><span class="legend-dot in"></span> In stock: <strong id="lbl-instock">10</strong></div>
+                <div class="legend-item"><span class="legend-dot low"></span> Low stock: <strong id="lbl-lowstock">3</strong></div>
+                <div class="legend-item"><span class="legend-dot out"></span> Out of stock: <strong id="lbl-outstock">2</strong></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="zendenta-tabs"><button class="zendenta-tab-btn active">Inventory</button></div>
+        <div class="filter-toolbar">
+          <div class="filter-left"><div class="search-box-pill" style="width: 100%;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg><input type="text" id="obat-search-input" placeholder="Search item or code..." oninput="handleSearchObat()"></div></div>
+          <div class="filter-right">
+            <button class="btn-zendenta btn-zendenta-outline" onclick="loadWarehouseStock()">Filters</button>
+            <button class="btn-zendenta btn-zendenta-primary" onclick="openAddMedModal()">+ Order Stock</button>
+          </div>
+        </div>
+        <div class="table-wrapper">
+          <table class="zendenta-table">
+            <thead><tr><th><input type="checkbox"></th><th>ORDER / KODE</th><th>KATEGORI / VENDOR</th><th>STATUS</th><th>STOK / SISA</th><th style="text-align: center;">HARGA JUAL</th><th style="text-align: center;">AKSI</th></tr></thead>
+            <tbody id="obat-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB DASHBOARD -->
+      <section id="tab-dashboard" class="tab-pane" style="display: none;">
+        <div class="card-zendenta">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <div><h2 style="font-size: 1.3rem; font-weight: 800;">Ringkasan Pasien & Tren Kunjungan</h2><p style="font-size: 0.82rem; color: var(--text-muted);">Data real-time rekam medis Klinik Hani.</p></div>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px;">
+            <div style="padding: 16px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: #fafbfc;"><div style="font-size: 0.75rem; font-weight: 700; color: var(--text-subtle);">KUNJUNGAN HARI INI</div><div style="font-size: 2rem; font-weight: 800; color: var(--primary);" id="kpi-today">6</div></div>
+            <div style="padding: 16px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: #fafbfc;"><div style="font-size: 0.75rem; font-weight: 700; color: var(--text-subtle);">KUNJUNGAN BULAN INI</div><div style="font-size: 2rem; font-weight: 800; color: var(--text-main);" id="kpi-month">42</div></div>
+            <div style="padding: 16px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: #fafbfc;"><div style="font-size: 0.75rem; font-weight: 700; color: var(--text-subtle);">TOTAL PASIEN TERDATA</div><div style="font-size: 2rem; font-weight: 800; color: var(--success);" id="kpi-overall">185</div></div>
+          </div>
+          <div style="width: 100%; height: 260px;"><svg id="trend-svg" width="100%" height="100%" viewBox="0 0 800 240" preserveAspectRatio="none"></svg></div>
+        </div>
+      </section>
+
+      <!-- TAB INPUT RME -->
+      <section id="tab-input-rme" class="tab-pane" style="display: none;">
+        <div class="card-zendenta">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+            <div>
+              <h2 style="font-size: 1.25rem; font-weight: 800;">Pendaftaran Pasien & Input Rekam Medis</h2>
+              <div style="display: flex; gap: 8px; margin-top: 4px;">
+                <span class="status-pill complete" id="badge-next-rm">Memuat No RM...</span>
+                <span class="status-pill warning" id="badge-next-antrian">Antrian: A-007</span>
+              </div>
+            </div>
+            <button class="btn-zendenta btn-zendenta-outline btn-zendenta-sm" onclick="resetFormRME()">Bersihkan Form</button>
+          </div>
+          <div class="patient-toggle">
+            <button type="button" id="btn-tipe-baru" class="toggle-btn active" onclick="setPatientType('baru')">✨ Pasien Baru</button>
+            <button type="button" id="btn-tipe-lama" class="toggle-btn" onclick="setPatientType('lama')">🔍 Pasien Lama</button>
+          </div>
+          <div id="box-search-pasien-lama" class="lookup-box" style="display: none; margin-bottom: 20px;">
+            <label class="form-label" style="color: var(--primary);">Cari Pasien Lama (Ketik No RM atau Nama):</label>
+            <input type="text" id="input-search-pasien" class="form-control" placeholder="Contoh: RM-000101 atau Siti Rahma..." oninput="handlePatientSearchInput(this.value)">
+            <div id="patient-search-results" class="lookup-dropdown"></div>
+          </div>
+          <form id="form-rme" onsubmit="event.preventDefault(); handleSaveRME();">
+            <input type="hidden" id="rme-tipe-pasien" value="baru">
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label" id="label-norm">Nomor Rekam Medis</label>
+                <input type="text" id="rme-norm" class="form-control" readonly style="background: #f8fafc; font-weight:700; color:var(--primary);">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Nomor Antrian Hari Ini</label>
+                <div style="display: flex; gap: 8px;">
+                  <input type="text" id="rme-noantrian" class="form-control" readonly style="font-weight: 800; color: var(--primary); background: #eff6ff;" placeholder="A-007">
+                  <button type="button" class="btn-zendenta btn-zendenta-outline btn-zendenta-sm" onclick="handleGenerateAndPrintTicket()">🎟️ Cetak Tiket</button>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Tujuan Poli / Ruang Periksa *</label>
+                <select id="rme-poli" class="form-control" required>
+                  <option value="Poli Umum">Poli Umum</option>
+                  <option value="Poli KIA / Kebidanan">Poli KIA / Kebidanan</option>
+                  <option value="Rawat Inap">Rawat Inap</option>
+                  <option value="Ruang Tindakan">Ruang Tindakan</option>
+                </select>
+              </div>
+              <div class="form-group"><label class="form-label">Nama Lengkap Pasien *</label><input type="text" id="rme-nama" class="form-control" required placeholder="Nama lengkap..."></div>
+              <div class="form-group"><label class="form-label">Alamat / Domisili *</label><input type="text" id="rme-alamat" class="form-control" required placeholder="Alamat lengkap..."></div>
+              <div class="form-group"><label class="form-label">Riwayat Alergi</label><input type="text" id="rme-alergi" class="form-control" placeholder="Alergi obat / makanan..."></div>
+              <div class="form-group">
+                <label class="form-label">Tenaga Medis Pemeriksa *</label>
+                <select id="rme-pemeriksa" class="form-control" required>
+                  <option value="">-- Memuat Data Staf Medis --</option>
+                </select>
+              </div>
+              <div class="form-group full"><label class="form-label">Anamnesa, Diagnosa & Tindakan Medis *</label><textarea id="rme-tindakan" class="form-control" required placeholder="Keluhan pasien, vital sign, diagnosa, tindakan..."></textarea></div>
+            </div>
+            <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border-color);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                <h4 style="font-size: 0.95rem; font-weight: 700;">💊 Terapi & Resep Obat Pasien</h4>
+                <button type="button" class="btn-zendenta btn-zendenta-outline btn-zendenta-sm" onclick="addPrescriptionRow()">+ Tambah Item Resep</button>
+              </div>
+              <div id="prescription-container" style="display: flex; flex-direction: column; gap: 10px;"></div>
+            </div>
+            <div style="margin-top: 24px; display: flex; justify-content: flex-end; gap: 10px;">
+              <button type="button" class="btn-zendenta btn-zendenta-outline" onclick="handleGenerateAndPrintTicket()">🎟️ Cetak Tiket Antrian</button>
+              <button type="submit" class="btn-zendenta btn-zendenta-primary">💾 Simpan Rekam Medis</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- TAB ASKEP / CPPT -->
+      <section id="tab-askep" class="tab-pane" style="display: none;">
+        <div class="card-zendenta">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <div>
+              <h2 style="font-size: 1.25rem; font-weight: 800;">Dokumentasi Asuhan Keperawatan & Kebidanan (CPPT)</h2>
+              <p style="font-size: 0.82rem; color: var(--text-muted);">Monitoring Rawat Inap & SOAP Terstandar.</p>
+            </div>
+          </div>
+          <div class="patient-toggle" style="margin-bottom: 20px;">
+            <button type="button" id="btn-askep-kebidanan" class="toggle-btn active" onclick="setAskepType('kebidanan')">🤰 Asuhan Kebidanan (Bidan)</button>
+            <button type="button" id="btn-askep-keperawatan" class="toggle-btn" onclick="setAskepType('keperawatan')">🩺 Asuhan Keperawatan (Perawat)</button>
+          </div>
+          <form id="form-askep" onsubmit="event.preventDefault(); handleSaveAskep();">
+            <input type="hidden" id="askep-type-val" value="kebidanan">
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label">Pilih Pasien / No RM *</label>
+                <select id="askep-patient-select" class="form-control" required onchange="handleSelectAskepPatient(this.value)">
+                  <option value="">-- Pilih Pasien --</option>
+                  <option value="RM-000101|Ny. Siti Rahma|Rawat Inap - Bed 01">RM-000101 - Ny. Siti Rahma (Bed 01)</option>
+                  <option value="RM-000102|Tn. Bambang Sutrisno|Rawat Inap - Bed 04">RM-000102 - Tn. Bambang Sutrisno (Bed 04)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Ruangan / Unit Rawat Inap *</label>
+                <select id="askep-ruangan" class="form-control" required>
+                  <option value="Rawat Inap - Bed 01">Rawat Inap - Bed 01</option>
+                  <option value="Rawat Inap - Bed 02">Rawat Inap - Bed 02</option>
+                  <option value="Rawat Inap - Bed 03">Rawat Inap - Bed 03</option>
+                  <option value="Rawat Inap - Bed 04">Rawat Inap - Bed 04</option>
+                  <option value="Rawat Inap - Bed 05">Rawat Inap - Bed 05</option>
+                  <option value="Rawat Inap - Bed 06">Rawat Inap - Bed 06</option>
+                  <option value="Rawat Inap - Bed 07">Rawat Inap - Bed 07</option>
+                  <option value="Rawat Inap - Bed 08">Rawat Inap - Bed 08</option>
+                  <option value="Rawat Inap - Bed 09">Rawat Inap - Bed 09</option>
+                  <option value="Rawat Inap - Bed 10">Rawat Inap - Bed 10</option>
+                  <option value="Rawat Inap - Bed 11">Rawat Inap - Bed 11</option>
+                  <option value="Rawat Inap - Bed 12">Rawat Inap - Bed 12</option>
+                  <option value="Rawat Inap - Bed 13">Rawat Inap - Bed 13</option>
+                  <option value="Rawat Inap - Bed 14">Rawat Inap - Bed 14</option>
+                  <option value="Rawat Inap - Bed 15">Rawat Inap - Bed 15</option>
+                  <option value="Rawat Inap - Bed 16">Rawat Inap - Bed 16</option>
+                  <option value="Rawat Inap - Bed 17">Rawat Inap - Bed 17</option>
+                  <option value="Rawat Inap - Bed 18">Rawat Inap - Bed 18</option>
+                  <option value="Rawat Inap - Bed 19">Rawat Inap - Bed 19</option>
+                  <option value="Rawat Inap - Bed 20">Rawat Inap - Bed 20</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Tenaga Medis Penanggung Jawab *</label>
+                <select id="askep-pemeriksa" class="form-control" required><option value="">-- Memuat Staf --</option></select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Shift / Waktu</label>
+                <select id="askep-shift" class="form-control">
+                  <option value="Pagi (07.00 - 14.00)">☀️ Pagi (07.00 - 14.00)</option>
+                  <option value="Siang (14.00 - 21.00)">⛅ Siang (14.00 - 21.00)</option>
+                  <option value="Malam (21.00 - 07.00)">🌙 Malam (21.00 - 07.00)</option>
+                </select>
+              </div>
+            </div>
+            <div style="margin-top: 18px; padding: 16px; background: #fafbfc; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+              <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">📊 TANDA-TANDA VITAL & FISIK</span>
+              <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-top: 10px;">
+                <div class="form-group"><label class="form-label">Tekanan Darah</label><input type="text" id="askep-td" class="form-control" placeholder="120/80"></div>
+                <div class="form-group"><label class="form-label">Nadi</label><input type="text" id="askep-nadi" class="form-control" placeholder="80 x/m"></div>
+                <div class="form-group"><label class="form-label">Suhu</label><input type="text" id="askep-suhu" class="form-control" placeholder="36.5 C"></div>
+                <div class="form-group"><label class="form-label">RR</label><input type="text" id="askep-rr" class="form-control" placeholder="20 x/m"></div>
+                <div class="form-group"><label class="form-label">SpO2</label><input type="text" id="askep-spo2" class="form-control" placeholder="98%"></div>
+                <div class="form-group"><label class="form-label">Nyeri</label><select id="askep-nyeri" class="form-control"><option value="0">0 - Tidak</option><option value="1-3">1-3 - Ringan</option></select></div>
+              </div>
+            </div>
+            <div style="margin-top: 18px;">
+              <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">📝 CATATAN SOAP</span>
+              <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 10px;">
+                <div class="form-group"><label class="form-label">S - Subjektif</label><textarea id="askep-s" class="form-control" required placeholder="Keluhan pasien..."></textarea></div>
+                <div class="form-group"><label class="form-label">O - Objektif</label><textarea id="askep-o" class="form-control" required placeholder="Hasil pemeriksaan..."></textarea></div>
+                <div class="form-group"><label class="form-label">A - Assessment</label><textarea id="askep-a" class="form-control" required placeholder="Diagnosa asuhan..."></textarea></div>
+                <div class="form-group"><label class="form-label">P - Plan</label><textarea id="askep-p" class="form-control" required placeholder="Rencana intervensi..."></textarea></div>
+              </div>
+            </div>
+            <div style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 10px;">
+              <button type="submit" class="btn-zendenta btn-zendenta-primary">💾 Simpan Asuhan (CPPT)</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- TAB RIWAYAT CPPT -->
+      <section id="tab-riwayat-cppt" class="tab-pane" style="display: none;">
+        <div class="card-zendenta">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+            <div>
+              <h2 style="font-size: 1.25rem; font-weight: 800;">Riwayat Catatan Perkembangan Pasien Terintegrasi (CPPT)</h2>
+              <p style="font-size: 0.82rem; color: var(--text-muted);">Pemantauan perkembangan pasien rawat inap & poli terstandar SOAP.</p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="status-pill complete" id="badge-cppt-counter">0 Catatan</span>
+              <button class="btn-zendenta btn-zendenta-outline btn-zendenta-sm" onclick="switchTab('askep')">+ Tulis CPPT</button>
+            </div>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 14px; margin-bottom: 18px; flex-wrap: wrap;">
+            <div class="search-box-pill" style="width: 100%; max-width: 380px;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <input type="text" id="cppt-quick-search" placeholder="Cari No RM, Pasien, atau Petugas..." oninput="handleFilterCPPT()">
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+              <select id="cppt-patient-print-picker" class="form-control" style="font-size: 0.8rem; padding: 6px 12px; width: auto;" onchange="handlePatientPickerChange(this.value)">
+                <option value="">🖨️ Cetak PDF Lembar CPPT Pasien...</option>
+                <option value="RM-000101|Ny. Siti Rahma">RM-000101 - Ny. Siti Rahma</option>
+                <option value="RM-000102|Tn. Bambang Sutrisno">RM-000102 - Tn. Bambang Sutrisno</option>
+              </select>
+              <div style="display: flex; gap: 4px; margin-left: 8px;">
+                <button type="button" class="toggle-btn active" id="filter-cppt-all" onclick="setCPPTFilter('all')">Semua</button>
+                <button type="button" class="toggle-btn" id="filter-cppt-kebidanan" onclick="setCPPTFilter('Kebidanan')">🤰 Kebidanan</button>
+                <button type="button" class="toggle-btn" id="filter-cppt-keperawatan" onclick="setCPPTFilter('Keperawatan')">🩺 Keperawatan</button>
+              </div>
+            </div>
+          </div>
+          <div id="cppt-list-container" style="display: flex; flex-direction: column; gap: 14px;"></div>
+        </div>
+      </section>
+
+      <!-- TAB KASIR -->
+      <section id="tab-kasir" class="tab-pane" style="display: none;">
+        <div class="card-zendenta">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <div><h2 style="font-size: 1.25rem; font-weight: 800;">Tagihan Pasien Menunggu Pembayaran</h2><span class="status-pill warning" id="badge-pending-kasir">0 Pasien</span></div>
+            <button class="btn-zendenta btn-zendenta-outline btn-zendenta-sm" onclick="loadPendingBilling()">🔄 Segarkan</button>
+          </div>
+          <div class="table-wrapper" style="margin-bottom: 28px;">
+            <table class="zendenta-table">
+              <thead><tr><th>ID KUNJUNGAN</th><th>NO RM</th><th>NAMA PASIEN</th><th>PEMERIKSA</th><th>ESTIMASI OBAT</th><th>JASA MEDIS</th><th style="text-align: center;">AKSI</th></tr></thead>
+              <tbody id="kasir-pending-tbody"></tbody>
+            </table>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h3 style="font-size: 1.1rem; font-weight: 800;">Riwayat Transaksi & Kwitansi Selesai</h3>
+            <input type="text" id="kasir-search-input" class="form-control" style="width: 260px;" placeholder="Cari No Invoice / Pasien..." oninput="handleSearchKasir()">
+          </div>
+          <div class="table-wrapper">
+            <table class="zendenta-table">
+              <thead><tr><th>NO INVOICE</th><th>TANGGAL</th><th>PASIEN & NO RM</th><th>JASA MEDIS</th><th>OBAT</th><th>TOTAL</th><th>METODE</th><th>STATUS</th><th style="text-align: center;">AKSI</th></tr></thead>
+              <tbody id="kasir-history-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB RIWAYAT RME -->
+      <section id="tab-riwayat-rme" class="tab-pane" style="display: none;">
+        <div class="card-zendenta">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <div><h2 style="font-size: 1.25rem; font-weight: 800;">Database Riwayat Rekam Medis</h2><span class="status-pill complete" id="rme-total-count">Menampilkan 7 Data Terbaru</span></div>
+            <input type="text" id="rme-search-input" class="form-control" style="width: 260px;" placeholder="Cari No RM / Nama pasien..." oninput="handleSearchRME()">
+          </div>
+          <div class="table-wrapper">
+            <table class="zendenta-table">
+              <thead><tr><th>ID KUNJUNGAN</th><th>NO RM</th><th>TANGGAL</th><th>PASIEN</th><th>PEMERIKSA</th><th>ANAMNESA & TINDAKAN</th><th>RESEP OBAT</th><th>STATUS</th></tr></thead>
+              <tbody id="rme-history-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB ANTRIAN -->
+      <section id="tab-antrian" class="tab-pane" style="display: none;">
+        <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 24px;">
+          <div class="queue-hero-card">
+            <div style="font-size: 1.1rem; font-weight: 700; text-transform: uppercase; opacity: 0.9;">Nomor Antrian Aktif</div>
+            <div class="queue-hero-no" id="display-call-no">A-003</div>
+            <div style="font-size: 1.6rem; font-weight: 800;" id="display-call-patient">An. Salsa Bella</div>
+            <div style="font-size: 1.15rem; margin-top: 6px; opacity: 0.85;" id="display-call-room">Poli Umum</div>
+            <div class="queue-admin-controls" style="margin-top: 32px; display: flex; gap: 12px; justify-content: center;">
+              <button class="btn-zendenta" style="background: #ffffff; color: var(--primary);" onclick="callNextQueue()">🔊 Panggil Berikutnya</button>
+              <button class="btn-zendenta" style="background: rgba(255,255,255,0.2); color: #ffffff;" onclick="markCurrentQueueDone()">✅ Selesai</button>
+            </div>
+          </div>
+          <div class="card-zendenta" style="margin-bottom: 0;">
+            <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 16px;">Daftar Antrian Hari Ini</h3>
+            <div class="table-wrapper">
+              <table class="zendenta-table">
+                <thead><tr><th>NO</th><th>NAMA PASIEN</th><th>POLI</th><th>STATUS</th><th class="queue-admin-controls">AKSI</th></tr></thead>
+                <tbody id="queue-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Modal Tiket Antrian -->
+  <div id="modal-queue-ticket" class="modal-backdrop">
+    <div class="modal-content" style="max-width: 400px; text-align: center;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h3 style="font-size: 1.1rem; font-weight: 800;">🎟️ Karcis Antrian Pasien</h3>
+        <button class="btn-circle" onclick="closeModal('modal-queue-ticket')">&times;</button>
+      </div>
+      <div class="receipt-paper">
+        <h3 style="font-size: 1.1rem; font-weight: 800;">KLINIK HANI PURWOREJO</h3>
+        <p style="font-size: 0.72rem; color: #64748b;">Layanan Kesehatan Primer & Rawat Inap</p>
+        <div style="border-top: 1px dashed #cbd5e1; margin: 10px 0;"></div>
+        <div style="font-size: 0.78rem; color: #64748b; font-weight: 700;">NOMOR ANTRIAN ANDA:</div>
+        <div id="ticket-print-no" style="font-size: 3.5rem; font-weight: 900; color: #2563eb; margin: 4px 0; line-height: 1;">A-007</div>
+        <div id="ticket-print-room" style="font-size: 1.1rem; font-weight: 800; margin-bottom: 6px;">Poli Umum</div>
+        <div style="border-top: 1px dashed #cbd5e1; margin: 10px 0;"></div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.78rem;"><span>No RM:</span><strong id="ticket-print-norm">RM-000101</strong></div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.78rem;"><span>Nama:</span><strong id="ticket-print-patient">Nama</strong></div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.78rem;"><span>Waktu:</span><span id="ticket-print-time">12/09/2026</span></div>
+      </div>
+      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px;">
+        <button class="btn-zendenta btn-zendenta-outline btn-zendenta-sm" onclick="closeModal('modal-queue-ticket')">Tutup</button>
+        <button class="btn-zendenta btn-zendenta-primary btn-zendenta-sm" onclick="window.print()">🖨️ Cetak</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Detail CPPT -->
+  <div id="modal-detail-cppt" class="modal-backdrop">
+    <div class="modal-content" style="max-width: 580px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 16px;">
+        <div><h3 style="font-size: 1.15rem; font-weight: 800;">Detail Catatan CPPT</h3><span style="font-size: 0.78rem; color: var(--text-muted);" id="modal-cppt-id">ID: CPPT-001</span></div>
+        <button class="btn-circle" onclick="closeModal('modal-detail-cppt')">&times;</button>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; background: #fafbfc; padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+        <div><div style="font-size: 0.72rem; color: var(--text-subtle); font-weight: 700;">PASIEN</div><div style="font-size: 0.95rem; font-weight: 800; color: var(--primary);" id="modal-cppt-patient">-</div><div style="font-size: 0.78rem;" id="modal-cppt-room">-</div></div>
+        <div><div style="font-size: 0.72rem; color: var(--text-subtle); font-weight: 700;">WAKTU & PEMERIKSA</div><div style="font-size: 0.85rem; font-weight: 700;" id="modal-cppt-time">-</div><div style="font-size: 0.78rem; color: var(--text-muted);" id="modal-cppt-author">-</div></div>
+      </div>
+      <div style="margin-bottom: 14px;"><span style="font-size: 0.75rem; font-weight: 700; color: var(--text-subtle);">TTV:</span><div id="modal-cppt-ttv" style="font-size: 0.85rem; font-weight: 600; margin-top: 4px; padding: 8px 12px; background: #eff6ff; border-radius: var(--radius-sm);">-</div></div>
+      <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px;">
+        <div style="padding: 10px; border-left: 3px solid #3b82f6; background: #f8fafc;"><strong style="color: #1d4ed8; font-size: 0.8rem;">S:</strong><p style="font-size: 0.82rem;" id="modal-cppt-s">-</p></div>
+        <div style="padding: 10px; border-left: 3px solid #10b981; background: #f8fafc;"><strong style="color: #047857; font-size: 0.8rem;">O:</strong><p style="font-size: 0.82rem;" id="modal-cppt-o">-</p></div>
+        <div style="padding: 10px; border-left: 3px solid #f59e0b; background: #f8fafc;"><strong style="color: #b45309; font-size: 0.8rem;">A:</strong><p style="font-size: 0.82rem;" id="modal-cppt-a">-</p></div>
+        <div style="padding: 10px; border-left: 3px solid #8b5cf6; background: #f8fafc;"><strong style="color: #6d28d9; font-size: 0.8rem;">P:</strong><p style="font-size: 0.82rem;" id="modal-cppt-p">-</p></div>
+      </div>
+      <div style="display: flex; justify-content: flex-end; gap: 10px;"><button class="btn-zendenta btn-zendenta-outline btn-zendenta-sm" onclick="closeModal('modal-detail-cppt')">Tutup</button></div>
+    </div>
+  </div>
+
+  <!-- Modal Cetak PDF Lembar CPPT -->
+  <div id="modal-print-patient-cppt" class="modal-backdrop">
+    <div class="modal-content" style="max-width: 900px; width: 95%; max-height: 94vh; padding: 20px;">
+      <div class="no-print" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 14px; border-bottom: 1px solid var(--border-color); padding-bottom: 14px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <div><h3 style="font-size: 1.15rem; font-weight: 800;">📄 Lembar CPPT Pasien Terintegrasi (Format PDF)</h3></div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn-zendenta btn-zendenta-outline btn-zendenta-sm" onclick="closeModal('modal-print-patient-cppt')">Tutup</button>
+            <button class="btn-zendenta btn-zendenta-primary btn-zendenta-sm" onclick="window.print()">🖨️ Cetak / Simpan PDF (A4)</button>
+          </div>
+        </div>
+        <div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+          <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+            <span style="font-size: 0.78rem; font-weight: 700;">📅 Filter Rentang Tanggal:</span>
+            <input type="date" id="print-date-start" class="form-control" style="padding: 4px 8px; font-size: 0.8rem; width: 140px;">
+            <input type="date" id="print-date-end" class="form-control" style="padding: 4px 8px; font-size: 0.8rem; width: 140px;">
+            <button type="button" class="btn-zendenta btn-zendenta-primary btn-zendenta-sm" onclick="applyCPPTDateFilter()">Terapkan</button>
+            <button type="button" class="btn-zendenta btn-zendenta-outline btn-zendenta-sm" onclick="resetCPPTDateFilter()">Semua</button>
+          </div>
+          <span id="print-filter-status-badge" class="status-pill complete" style="font-size: 0.7rem;">Semua Riwayat</span>
+        </div>
+      </div>
+      <div id="print-patient-cppt-area" class="cppt-pdf-sheet">
+        <div class="cppt-watermark">DOKUMEN RAHASIA MEDIS • KLINIK HANI PURWOREJO</div>
+        <div class="cppt-pdf-header">
+          <div class="cppt-kop-clinic">
+            <div style="width: 44px; height: 44px; background: #2563eb; color: #ffffff; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.25rem;">+</div>
+            <div>
+              <h3>KLINIK HANI PURWOREJO</h3>
+              <p>Layanan Kesehatan Primer & Rawat Inap • Izin Operasional Klinik Pratama No. 503/421/2023</p>
+              <p style="font-size: 0.7rem; color: #64748b;">Jl. Raya Kutoarjo No. 88, Purworejo • Telp: (0275) 321-789</p>
+            </div>
+          </div>
+          <div style="text-align: right; border-left: 1px solid #cbd5e1; padding-left: 14px;">
+            <div style="font-size: 0.95rem; font-weight: 800; color: #1e3a8a;">LEMBAR CPPT</div>
+            <div style="font-size: 0.7rem; font-weight: 700; color: #475569;">CATATAN PERKEMBANGAN<br>PASIEN TERINTEGRASI</div>
+          </div>
+        </div>
+        <div class="cppt-patient-info-box">
+          <div><span style="color: #64748b; font-size: 0.72rem; display: block;">NO REKAM MEDIS</span><strong style="color: #2563eb; font-size: 0.95rem;" id="print-pdf-norm">-</strong></div>
+          <div><span style="color: #64748b; font-size: 0.72rem; display: block;">NAMA PASIEN</span><strong style="color: #0f172a; font-size: 0.95rem;" id="print-pdf-patient-name">-</strong></div>
+          <div><span style="color: #64748b; font-size: 0.72rem; display: block;">RUANGAN</span><strong style="color: #0f172a;" id="print-pdf-room">-</strong></div>
+          <div><span style="color: #64748b; font-size: 0.72rem; display: block;">PERIODE</span><strong style="color: #047857;" id="print-pdf-period">Semua Tanggal</strong></div>
+        </div>
+        <table class="cppt-print-table">
+          <thead><tr><th style="width: 14%;">TANGGAL & WAKTU</th><th style="width: 15%;">PROFESI / PPA</th><th style="width: 43%;">ASESMEN PASIEN & SOAP</th><th style="width: 20%;">INSTRUKSI PPA</th><th style="width: 8%;">PARAF</th></tr></thead>
+          <tbody id="print-pdf-cppt-tbody"></tbody>
+        </table>
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 18px; font-size: 0.76rem;">
+          <div style="max-width: 480px; color: #475569; font-size: 0.7rem;"><em>* Dokumen resmi rekam medis pasien Klinik Hani.</em></div>
+          <div style="text-align: center; min-width: 200px;">
+            <div style="color: #475569; font-size: 0.72rem;">Purworejo, <span id="print-pdf-footer-date">-</span></div>
+            <div style="color: #1e3a8a; font-weight: 700; margin-top: 2px;">DPJP / Penanggung Jawab</div>
+            <div style="height: 44px; border-bottom: 1px solid #334155; margin: 4px 20px;"></div>
+            <div style="font-weight: 700;" id="print-pdf-dpjp-name">( Tenaga Medis Penanggung Jawab )</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Kwitansi Kasir -->
+  <div id="modal-receipt" class="modal-backdrop">
+    <div class="modal-content" style="max-width: 420px;">
+      <div class="receipt-paper">
+        <h3 style="text-align: center; font-size: 1.1rem; font-weight: 800;">KLINIK HANI</h3>
+        <p style="text-align: center; font-size: 0.72rem; color: #64748b; margin-bottom: 12px;">Jl. Raya Kutoarjo, Purworejo</p>
+        <div style="border-top: 1px dashed #cbd5e1; margin: 8px 0;"></div>
+        <div style="display: flex; justify-content: space-between;"><span>Invoice:</span><strong id="rec-invoice">INV-0000</strong></div>
+        <div style="display: flex; justify-content: space-between;"><span>Tanggal:</span><span id="rec-date">-</span></div>
+        <div style="display: flex; justify-content: space-between;"><span>No RM:</span><span id="rec-norm">-</span></div>
+        <div style="display: flex; justify-content: space-between;"><span>Pasien:</span><strong id="rec-patient">-</strong></div>
+        <div style="border-top: 1px dashed #cbd5e1; margin: 8px 0;"></div>
+        <div style="display: flex; justify-content: space-between;"><span>Jasa Medis:</span><span id="rec-tindakan">-</span></div>
+        <div style="display: flex; justify-content: space-between;"><span>Resep Obat:</span><span id="rec-obat">-</span></div>
+        <div id="rec-med-items" style="font-size: 0.75rem; color: #64748b; padding-left: 6px; margin: 4px 0;"></div>
+        <div style="border-top: 1px dashed #cbd5e1; margin: 8px 0;"></div>
+        <div style="display: flex; justify-content: space-between; font-size: 1rem;"><strong>TOTAL:</strong><strong id="rec-total">-</strong></div>
+      </div>
+      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px;">
+        <button class="btn-zendenta btn-zendenta-outline btn-zendenta-sm" onclick="closeModal('modal-receipt')">Tutup</button>
+        <button class="btn-zendenta btn-zendenta-primary btn-zendenta-sm" onclick="window.print()">🖨️ Cetak</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Pembayaran Kasir -->
+  <div id="modal-kasir-pay" class="modal-backdrop">
+    <div class="modal-content">
+      <h3 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 4px;">💳 Pembayaran Kasir</h3>
+      <input type="hidden" id="pay-id-kunjungan"><input type="hidden" id="pay-norm"><input type="hidden" id="pay-rincian-obat-string">
+      <div class="form-group" style="margin-bottom: 12px;"><label class="form-label">Nama Pasien</label><input type="text" id="pay-patient-name" class="form-control" readonly style="font-weight: 700; color: var(--primary);"></div>
+      <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+        <div class="form-group"><label class="form-label">Jasa Medis (Rp)</label><input type="number" id="pay-fee-tindakan" class="form-control" value="35000" oninput="calculateCashierTotal()"></div>
+        <div class="form-group"><label class="form-label">Total Obat (Rp)</label><input type="number" id="pay-fee-obat" class="form-control" value="0" readonly></div>
+      </div>
+      <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+        <div class="form-group"><label class="form-label">Grand Total</label><input type="text" id="pay-grand-total" class="form-control" readonly style="font-weight: 800; color: var(--primary);"></div>
+        <div class="form-group"><label class="form-label">Metode</label><select id="pay-method" class="form-control"><option value="Tunai">💵 Tunai</option><option value="QRIS">📱 QRIS</option><option value="Transfer">🏦 Transfer</option></select></div>
+      </div>
+      <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px;">
+        <div class="form-group"><label class="form-label">Uang Diterima (Rp)</label><input type="number" id="pay-amount-paid" class="form-control" oninput="calculateCashierTotal()"></div>
+        <div class="form-group"><label class="form-label">Kembalian</label><input type="text" id="pay-change-amount" class="form-control" readonly style="font-weight: 700; color: var(--success);"></div>
+      </div>
+      <div style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button class="btn-zendenta btn-zendenta-outline btn-zendenta-sm" onclick="closeModal('modal-kasir-pay')">Batal</button>
+        <button class="btn-zendenta btn-zendenta-primary btn-zendenta-sm" onclick="processPayment()">✅ Bayar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Tambah Obat -->
+  <div id="modal-add-obat" class="modal-backdrop">
+    <div class="modal-content">
+      <h3 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 12px;">+ Tambah Item Obat</h3>
+      <div class="form-group" style="margin-bottom: 10px;"><label class="form-label">Nama Obat & Dosis *</label><input type="text" id="new-med-name" class="form-control" placeholder="Contoh: Paracetamol 500mg"></div>
+      <div class="form-group" style="margin-bottom: 10px;"><label class="form-label">Vendor *</label><input type="text" id="new-med-cat" class="form-control" placeholder="Contoh: Kimia Farma"></div>
+      <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+        <div class="form-group"><label class="form-label">Stok Awal</label><input type="number" id="new-med-stock" class="form-control" value="50"></div>
+        <div class="form-group"><label class="form-label">Satuan</label><input type="text" id="new-med-unit" class="form-control" value="Tablet"></div>
+      </div>
+      <div class="form-group" style="margin-bottom: 16px;"><label class="form-label">Harga Jual Satuan (Rp) *</label><input type="number" id="new-med-price" class="form-control" value="3000"></div>
+      <div style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button class="btn-zendenta btn-zendenta-outline btn-zendenta-sm" onclick="closeModal('modal-add-obat')">Batal</button>
+        <button class="btn-zendenta btn-zendenta-primary btn-zendenta-sm" onclick="submitNewMedicine()">Simpan</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-wrap"></div>
+
+  <script>
+    var appState = {
+      currentUser: null, activeTab: 'gudang-obat',
+      clinicProfile: { brand: 'Klinik Hani', name: 'Klinik Hani Purworejo', address: 'Jl. Raya Kutoarjo, Purworejo', phone: '(0275) 321-789', license: 'Izin Operasional Klinik Pratama No. 503/421/2023', city: 'Purworejo' },
+      medicines: [], examiners: [], queueList: [], rmeHistory: [],
+      autoNewRM: 'RM-000107', autoNewAntrian: 'A-007', patientType: 'baru',
+      searchTimer: null, autoSyncCountdown: 60, cpptFilterType: 'all',
+      currentPrintPatientNoRM: '', currentPrintPatientName: '', currentPrintRawRecords: []
+    };
+
+    var isGoogleEnv = (typeof google !== 'undefined' && typeof google.script !== 'undefined' && typeof google.script.run !== 'undefined');
+    var autoRefreshIntervalTimer = null, autoRefreshCountdownTimer = null;
+
+    function savePersistentUserSession(user) {
+      try { if (window.localStorage) window.localStorage.setItem('klinik_hani_user_session', JSON.stringify(user)); } catch (e) {}
+    }
+    function getPersistentUserSession() {
+      var saved = null;
+      try { if (window.localStorage) saved = window.localStorage.getItem('klinik_hani_user_session'); } catch (e) {}
+      return saved;
+    }
+    function clearPersistentUserSession() {
+      try { if (window.localStorage) window.localStorage.removeItem('klinik_hani_user_session'); } catch (e) {}
+    }
+
+    var mockMedicines = [
+      { kode: '#OS12KOS', nama: 'Paracetamol 500mg', kategori: 'Barone LLC.', stok: 120, satuan: 'Tablet', harga: 2500 },
+      { kode: '#OS19KOK', nama: 'Amoxicillin 500mg', kategori: 'Acme Co.', stok: 85, satuan: 'Kapsul', harga: 6000 },
+      { kode: '#OS14KOC', nama: 'Cetirizine 10mg', kategori: 'Abstergo Ltd.', stok: 12, satuan: 'Tablet', harga: 4000 }
+    ];
+    var mockExaminers = [
+      { name: 'Bd. Hani Rahmawati, S.Tr.Keb', role: 'Bidan / Admin' },
+      { name: 'dr. Sri Wahyuni, Sp.OG', role: 'Dokter' },
+      { name: 'Bd. Lestari Handayani, Amd.Keb', role: 'Bidan' },
+      { name: 'Ns. Ahmad Fauzi, S.Kep', role: 'Perawat' }
+    ];
+    var mockAskepHistory = [
+      { id: 'CPPT-1', waktu: '12/09/2026 08:30', shift: 'Pagi (07.00 - 14.00)', noRM: 'RM-000101', nama: 'Ny. Siti Rahma', ruangan: 'Rawat Inap - Bed 01', jenis: 'Kebidanan', pemeriksa: 'Bd. Hani Rahmawati, S.Tr.Keb', profesi: 'Bidan', ttv: 'TD: 110/70 | N: 80 | S: 36.6C', soap: 'S: Pusing berkurang. O: KU tenang. A: G2P1A0 28mgg baik. P: Terapi oral.', status: 'Terverifikasi' },
+      { id: 'CPPT-2', waktu: '12/09/2026 08:15', shift: 'Pagi (07.00 - 14.00)', noRM: 'RM-000105', nama: 'Tn. Joko Prasetyo', ruangan: 'Rawat Inap - Bed 03', jenis: 'Keperawatan', pemeriksa: 'Ns. Ahmad Fauzi, S.Kep', profesi: 'Perawat', ttv: 'TD: 125/80 | N: 84 | S: 37.0C', soap: 'S: Nyeri ulu hati berkurang. O: Abdomen supel. A: Dispepsia membaik. P: Pantau diet.', status: 'Terverifikasi' }
+    ];
+    var mockRMEHistory = [
+      { idKunjungan: 'RME-20260912-0001', noRM: 'RM-000101', tanggal: '12/09/2026', nama: 'Ny. Siti Rahma', pemeriksa: 'Bd. Hani Rahmawati', tindakan: 'ANC Trimester 2', resep: 'Paracetamol', status: 'Selesai' },
+      { idKunjungan: 'RME-20260912-0002', noRM: 'RM-000102', tanggal: '12/09/2026', nama: 'Tn. Bambang Sutrisno', pemeriksa: 'dr. Sri Wahyuni', tindakan: 'Hecting luka 3 simpul', resep: 'Amoxicillin', status: 'Selesai' },
+      { idKunjungan: 'RME-20260912-0003', noRM: 'RM-000103', tanggal: '12/09/2026', nama: 'An. Salsa Bella', pemeriksa: 'Ns. Ahmad Fauzi', tindakan: 'Faringitis akut', resep: 'Ambroxol', status: 'Selesai' },
+      { idKunjungan: 'RME-20260912-0004', noRM: 'RM-000104', tanggal: '12/09/2026', nama: 'Ny. Wahyuni Astuti', pemeriksa: 'Bd. Lestari Handayani', tindakan: 'KB Suntik 3 Bulan', resep: 'Tanpa Resep', status: 'Selesai' },
+      { idKunjungan: 'RME-20260912-0005', noRM: 'RM-000105', tanggal: '12/09/2026', nama: 'Tn. Joko Prasetyo', pemeriksa: 'dr. Budi Santoso', tindakan: 'Dispepsia akut', resep: 'Antasida', status: 'Selesai' },
+      { idKunjungan: 'RME-20260912-0006', noRM: 'RM-000106', tanggal: '12/09/2026', nama: 'Tn. Slamet Riyadi', pemeriksa: 'Ns. Ratna Wulandari', tindakan: 'Kontrol Hipertensi', resep: 'Amlodipine', status: 'Selesai' },
+      { idKunjungan: 'RME-20260912-0007', noRM: 'RM-000107', tanggal: '12/09/2026', nama: 'Ny. Maimunah', pemeriksa: 'Bd. Hani Rahmawati', tindakan: 'Pemeriksaan rutin', resep: 'Vitamin C', status: 'Selesai' },
+      { idKunjungan: 'RME-20260912-0008', noRM: 'RM-000108', tanggal: '11/09/2026', nama: 'Tn. Rudi Hartono', pemeriksa: 'dr. Sri Wahyuni', tindakan: 'Konsultasi umum', resep: 'Paracetamol', status: 'Selesai' }
+    ];
+
+    window.addEventListener('DOMContentLoaded', function() {
+      var saved = getPersistentUserSession();
+      if (saved) {
+        try { applyUserSession(JSON.parse(saved)); } catch(e) { showLoginOverlay(); }
+      } else {
+        showLoginOverlay();
+      }
+    });
+
+    function showLoginOverlay() {
+      stopAutoRefreshCycle();
+      document.getElementById('login-overlay').style.display = 'flex';
+      document.getElementById('login-username').focus();
+    }
+
+    function handleLogin() {
+      var u = document.getElementById('login-username').value.trim().toLowerCase();
+      var p = document.getElementById('login-password').value.trim();
+      if (!u || !p) { showToast('Username dan password wajib diisi!', 'error'); return; }
+
+      if (isGoogleEnv) {
+        google.script.run
+          .withSuccessHandler(function(res) {
+            if (res && res.status === 'success') {
+              savePersistentUserSession(res.user);
+              applyUserSession(res.user);
+            } else {
+              showToast(res.message || 'Login gagal.', 'error');
+            }
+          })
+          .withFailureHandler(function(err) {
+            if (u === 'admin' && p === 'hani123') {
+              var adminUser = { username: 'admin', name: 'Bd. Hani Rahmawati, S.Tr.Keb', role: 'admin' };
+              savePersistentUserSession(adminUser);
+              applyUserSession(adminUser);
+            } else if (u === 'antrian' && p === 'antrian123') {
+              var displayUser = { username: 'antrian', name: 'Layar Display TV', role: 'display' };
+              savePersistentUserSession(displayUser);
+              applyUserSession(displayUser);
+            } else {
+              showToast('Username atau password salah!', 'error');
+            }
+          })
+          .loginUser(u, p);
+      } else {
+        if (u === 'admin' && p === 'hani123') {
+          var adminUser = { username: 'admin', name: 'Bd. Hani Rahmawati, S.Tr.Keb', role: 'admin' };
+          savePersistentUserSession(adminUser);
+          applyUserSession(adminUser);
+        } else if (u === 'antrian' && p === 'antrian123') {
+          var displayUser = { username: 'antrian', name: 'Layar Display TV', role: 'display' };
+          savePersistentUserSession(displayUser);
+          applyUserSession(displayUser);
+        } else {
+          showToast('Username atau password salah!', 'error');
+        }
+      }
+    }
+
+    function applyUserSession(user) {
+      appState.currentUser = user;
+      document.getElementById('login-overlay').style.display = 'none';
+      document.getElementById('header-user-name').innerText = user.name;
+      document.getElementById('header-avatar').innerText = user.role === 'display' ? 'TV' : 'HR';
+
+      if (user.role === 'display') {
+        document.body.classList.add('role-display');
+        document.getElementById('header-user-role').innerText = 'Display Ruang Tunggu';
+        switchTab('antrian');
+      } else {
+        document.body.classList.remove('role-display');
+        document.getElementById('header-user-role').innerText = 'Super Admin / Medis';
+        switchTab('gudang-obat');
+      }
+      initApp();
+      addPrescriptionRow();
+      startAutoRefreshCycle();
+    }
+
+    function handleLogout() {
+      clearPersistentUserSession();
+      appState.currentUser = null;
+      document.getElementById('login-password').value = '';
+      document.body.classList.remove('role-display');
+      showLoginOverlay();
+      showToast('Anda telah keluar dari sistem.', 'info');
+    }
+
+    function startAutoRefreshCycle() {
+      stopAutoRefreshCycle();
+      appState.autoSyncCountdown = 60;
+      updateSyncStatusText();
+      autoRefreshCountdownTimer = setInterval(function() {
+        appState.autoSyncCountdown--;
+        if (appState.autoSyncCountdown <= 0) appState.autoSyncCountdown = 60;
+        updateSyncStatusText();
+      }, 1000);
+      autoRefreshIntervalTimer = setInterval(function() { executeSilentBackgroundRefresh(); }, 60000);
+    }
+    function stopAutoRefreshCycle() {
+      if (autoRefreshCountdownTimer) clearInterval(autoRefreshCountdownTimer);
+      if (autoRefreshIntervalTimer) clearInterval(autoRefreshIntervalTimer);
+    }
+    function updateSyncStatusText() {
+      var el = document.getElementById('sync-status-text');
+      if (el) el.innerText = 'Live: ' + appState.autoSyncCountdown + 's';
+    }
+    function triggerManualSync() {
+      appState.autoSyncCountdown = 60;
+      updateSyncStatusText();
+      executeSilentBackgroundRefresh(true);
+    }
+    function executeSilentBackgroundRefresh(isManual) {
+      if (!appState.currentUser) return;
+      var cur = appState.activeTab;
+      if (cur === 'antrian' || appState.currentUser.role === 'display') loadTodayQueue(true);
+      else if (cur === 'gudang-obat') loadWarehouseStock();
+      else if (cur === 'riwayat-cppt') loadRiwayatCPPT();
+      else if (cur === 'kasir') { loadPendingBilling(); loadBillingHistory(); }
+      else if (cur === 'dashboard') loadAnalytics();
+      else if (cur === 'riwayat-rme') loadRMEHistory();
+      if (isManual) showToast('Data disinkronkan.', 'success');
+    }
+
+    function formatRupiah(num) { return 'Rp ' + (num || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
+    function toggleSidebar() { if (appState.currentUser && appState.currentUser.role === 'display') return; document.getElementById('sidebar').classList.toggle('mobile-open'); }
+
+    function switchTab(tabId) {
+      if (appState.currentUser && appState.currentUser.role === 'display' && tabId !== 'antrian') return;
+      appState.activeTab = tabId;
+      var tabs = ['gudang-obat', 'dashboard', 'input-rme', 'askep', 'riwayat-cppt', 'kasir', 'riwayat-rme', 'antrian'];
+      var titles = { 'gudang-obat': 'Stocks', 'dashboard': 'Dashboard', 'input-rme': 'Input Rekam Medis', 'askep': 'Asuhan CPPT', 'riwayat-cppt': 'Riwayat CPPT', 'kasir': 'Kasir & Billing', 'riwayat-rme': 'Riwayat Pasien', 'antrian': 'Display Antrian' };
+
+      for (var i = 0; i < tabs.length; i++) {
+        var el = document.getElementById('tab-' + tabs[i]);
+        if (el) el.style.display = (tabs[i] === tabId) ? 'block' : 'none';
+      }
+      document.getElementById('topbar-page-title').innerText = titles[tabId] || 'Klinik Hani';
+      var links = document.querySelectorAll('.sidebar-menu .nav-link');
+      for (var j = 0; j < links.length; j++) links[j].classList.remove('active');
+      var activeBtn = document.getElementById('nav-' + tabId);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      if (tabId === 'gudang-obat') loadWarehouseStock();
+      if (tabId === 'dashboard') loadAnalytics();
+      if (tabId === 'askep') populateExaminersForAskep('Bidan');
+      if (tabId === 'riwayat-cppt') loadRiwayatCPPT();
+      if (tabId === 'kasir') { loadPendingBilling(); loadBillingHistory(); }
+      if (tabId === 'riwayat-rme') loadRMEHistory();
+      if (tabId === 'antrian') loadTodayQueue();
+    }
+
+    function applyClinicProfile(prof) {
+      if (!prof) return;
+      appState.clinicProfile = prof;
+      if (document.getElementById('sidebar-brand-name')) document.getElementById('sidebar-brand-name').innerText = prof.brand;
+      if (document.getElementById('clinic-badge-title')) document.getElementById('clinic-badge-title').innerText = prof.name;
+      if (document.getElementById('clinic-badge-subtitle')) document.getElementById('clinic-badge-subtitle').innerText = prof.address;
+    }
+
+    function initApp() {
+      if (isGoogleEnv) {
+        google.script.run
+          .withSuccessHandler(function(res) {
+            if (res && res.status === 'success') {
+              if (res.clinicProfile) applyClinicProfile(res.clinicProfile);
+              appState.medicines = res.medicines || [];
+              appState.examiners = res.examiners || [];
+              appState.autoNewRM = res.nextRM || 'RM-000107';
+              appState.autoNewAntrian = res.nextAntrian || 'A-007';
+              if (appState.patientType === 'baru') document.getElementById('rme-norm').value = appState.autoNewRM;
+              document.getElementById('badge-next-rm').innerText = 'Next RM: ' + appState.autoNewRM;
+              document.getElementById('rme-noantrian').value = appState.autoNewAntrian;
+              document.getElementById('badge-next-antrian').innerText = 'Antrian: ' + appState.autoNewAntrian;
+              populateExaminers(appState.examiners);
+              updateAssetHeader(appState.medicines);
+            }
+          })
+          .withFailureHandler(function(err) {
+            applyClientFallbackData();
+          })
+          .getInitialPayload();
+      } else {
+        applyClientFallbackData();
+      }
+    }
+
+    function applyClientFallbackData() {
+      applyClinicProfile(appState.clinicProfile);
+      appState.medicines = mockMedicines;
+      appState.examiners = mockExaminers;
+      appState.rmeHistory = mockRMEHistory;
+      populateExaminers(mockExaminers);
+      updateAssetHeader(mockMedicines);
+      document.getElementById('rme-norm').value = 'RM-000107';
+    }
+
+    function populateExaminers(list) {
+      var sel = document.getElementById('rme-pemeriksa');
+      var html = '<option value="">-- Pilih Staf Medis Pemeriksa --</option>';
+      for (var i = 0; i < list.length; i++) {
+        var ex = list[i];
+        html += '<option value="' + ex.name + '">' + ex.name + ' (' + ex.role + ')</option>';
+      }
+      sel.innerHTML = html;
+    }
+
+    function populateExaminersForAskep(filterRole) {
+      var sel = document.getElementById('askep-pemeriksa');
+      var list = appState.examiners && appState.examiners.length > 0 ? appState.examiners : mockExaminers;
+      var html = '<option value="">-- Pilih Tenaga Medis --</option>';
+      for (var i = 0; i < list.length; i++) {
+        var ex = list[i];
+        var isSelected = (filterRole && ex.role.toLowerCase().indexOf(filterRole.toLowerCase()) !== -1) ? 'selected' : '';
+        html += '<option value="' + ex.name + '" ' + isSelected + '>' + ex.name + ' (' + ex.role + ')</option>';
+      }
+      sel.innerHTML = html;
+    }
+
+    function updateAssetHeader(meds) {
+      var totalVal = 0, inStock = 0, lowStock = 0, outStock = 0;
+      for (var i = 0; i < meds.length; i++) {
+        var m = meds[i];
+        totalVal += (m.stok || 0) * (m.harga || 0);
+        if (m.stok > 15) inStock++; else if (m.stok > 0) lowStock++; else outStock++;
+      }
+      document.getElementById('stock-total-asset').innerText = formatRupiah(totalVal || 2455000);
+      document.getElementById('stock-product-count').innerText = meds.length || 15;
+      document.getElementById('lbl-instock').innerText = inStock;
+      document.getElementById('lbl-lowstock').innerText = lowStock;
+      document.getElementById('lbl-outstock').innerText = outStock;
+    }
+
+    function loadWarehouseStock() {
+      var kw = appState.obatKeyword || '';
+      if (isGoogleEnv) {
+        google.script.run
+          .withSuccessHandler(function(res) {
+            if (res && res.status === 'success') {
+              renderObatTable(res.data);
+              updateAssetHeader(res.data);
+            }
+          })
+          .withFailureHandler(function(err) { renderObatTable(mockMedicines); })
+          .getWarehouseStockPaginated(1, 20, kw);
+      } else {
+        renderObatTable(mockMedicines);
+      }
+    }
+
+    function renderObatTable(items) {
+      var tbody = document.getElementById('obat-tbody');
+      if (!items || items.length === 0) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px;">Tidak ada obat.</td></tr>'; return; }
+      var html = '';
+      for (var i = 0; i < items.length; i++) {
+        var m = items[i];
+        var badge = m.stok <= 0 ? '<span class="status-pill danger">HABIS</span>' : (m.stok < 15 ? '<span class="status-pill warning">MENIPIS</span>' : '<span class="status-pill complete">LENGKAP</span>');
+        var safeKode = (m.kode || '').replace(/'/g, "\\'");
+        var safeNama = (m.nama || '').replace(/'/g, "\\'");
+        html += '<tr><td><input type="checkbox"></td>' +
+          '<td><strong>' + m.kode + '</strong><div style="font-size:0.75rem; color:var(--text-subtle);">' + m.nama + '</div></td>' +
+          '<td>🏢 ' + (m.kategori || '-') + '</td><td>' + badge + '</td>' +
+          '<td><div class="mini-progress-box"><div class="mini-bar-track"><div class="mini-bar-fill" style="width:' + Math.min(100, m.stok) + '%;"></div></div><span class="mini-bar-label">' + m.stok + '</span></div></td>' +
+          '<td style="text-align:center; font-weight:700;">' + formatRupiah(m.harga) + '</td>' +
+          '<td style="text-align:center;"><button class="btn-receive" onclick="openRestockModal(\'' + safeKode + '\', \'' + safeNama + '\')">Receive</button></td></tr>';
+      }
+      tbody.innerHTML = html;
+    }
+
+    function handleSearchObat() {
+      appState.obatKeyword = document.getElementById('obat-search-input').value;
+      loadWarehouseStock();
+    }
+
+    function openAddMedModal() { document.getElementById('modal-add-obat').style.display = 'flex'; }
+    function submitNewMedicine() {
+      var nama = document.getElementById('new-med-name').value.trim();
+      var kat = document.getElementById('new-med-cat').value.trim();
+      var stok = parseInt(document.getElementById('new-med-stock').value, 10) || 0;
+      var satuan = document.getElementById('new-med-unit').value.trim();
+      var harga = parseInt(document.getElementById('new-med-price').value, 10) || 0;
+      if (!nama || !kat) { showToast('Nama & vendor wajib diisi!', 'error'); return; }
+
+      var payload = { nama: nama, kategori: kat, stok: stok, satuan: satuan, harga: harga };
+      if (isGoogleEnv) {
+        google.script.run
+          .withSuccessHandler(function(res) {
+            if (res && res.status === 'success') {
+              showToast(res.message, 'success');
+              closeModal('modal-add-obat');
+              loadWarehouseStock();
+            }
+          })
+          .addMasterMedicine(payload);
+      } else {
+        mockMedicines.push({ kode: '#OS99KOD', nama: nama, kategori: kat, stok: stok, satuan: satuan, harga: harga });
+        closeModal('modal-add-obat');
+        loadWarehouseStock();
+        showToast('Obat berhasil ditambahkan (Mock)', 'success');
+      }
+    }
+
+    function openRestockModal(kode, nama) {
+      var qty = prompt('Masukkan jumlah restock untuk ' + nama + ':', '20');
+      if (qty && parseInt(qty, 10) > 0) {
+        var num = parseInt(qty, 10);
+        if (isGoogleEnv) {
+          google.script.run
+            .withSuccessHandler(function(res) { if (res && res.status === 'success') { showToast(res.message, 'success'); loadWarehouseStock(); } })
+            .restockMedicine(kode, num);
+        } else {
+          showToast('Restock berhasil (Mock)', 'success');
+          loadWarehouseStock();
+        }
+      }
+    }
+
+    function setPatientType(type) {
+      appState.patientType = type;
+      document.getElementById('rme-tipe-pasien').value = type;
+      var btnBaru = document.getElementById('btn-tipe-baru');
+      var btnLama = document.getElementById('btn-tipe-lama');
+      var boxSearch = document.getElementById('box-search-pasien-lama');
+      var labelNorm = document.getElementById('label-norm');
+      var inputNorm = document.getElementById('rme-norm');
+
+      if (type === 'lama') {
+        btnBaru.classList.remove('active'); btnLama.classList.add('active');
+        boxSearch.style.display = 'block';
+        labelNorm.innerText = 'No RM (Terpilih)';
+        inputNorm.value = '';
+        document.getElementById('input-search-pasien').focus();
+      } else {
+        btnLama.classList.remove('active'); btnBaru.classList.add('active');
+        boxSearch.style.display = 'none';
+        labelNorm.innerText = 'Nomor Rekam Medis (Auto Baru)';
+        inputNorm.value = appState.autoNewRM || 'RM-000107';
+      }
+    }
+
+    function handlePatientSearchInput(val) {
+      clearTimeout(appState.searchTimer);
+      var box = document.getElementById('patient-search-results');
+      var kw = (val || '').trim();
+      if (!kw) { box.style.display = 'none'; return; }
+
+      appState.searchTimer = setTimeout(function() {
+        if (isGoogleEnv) {
+          google.script.run
+            .withSuccessHandler(function(res) {
+              if (res && res.status === 'success') renderPatientSearchResults(res.data);
+            })
+            .searchExistingPatients(kw);
+        } else {
+          renderPatientSearchResults([{ noRM: 'RM-000101', nama: 'Ny. Siti Rahma', alamat: 'Kutoarjo', alergi: 'Penisilin' }]);
+        }
+      }, 200);
+    }
+
+    function renderPatientSearchResults(list) {
+      var box = document.getElementById('patient-search-results');
+      if (!list || list.length === 0) { box.innerHTML = '<div style="padding:10px;">Tidak ditemukan.</div>'; box.style.display = 'block'; return; }
+      var html = '';
+      for (var i = 0; i < list.length; i++) {
+        var p = list[i];
+        html += '<div class="lookup-item" onclick="selectExistingPatient(\'' + p.noRM + '\', \'' + p.nama.replace(/'/g, "\\'") + '\', \'' + (p.alamat || '').replace(/'/g, "\\'") + '\', \'' + (p.alergi || '').replace(/'/g, "\\'") + '\')"><strong>' + p.noRM + ' - ' + p.nama + '</strong><div style="font-size:0.75rem; color:var(--text-muted);">' + p.alamat + '</div></div>';
+      }
+      box.innerHTML = html; box.style.display = 'block';
+    }
+
+    function selectExistingPatient(noRM, nama, alamat, alergi) {
+      document.getElementById('rme-norm').value = noRM;
+      document.getElementById('rme-nama').value = nama;
+      document.getElementById('rme-alamat').value = alamat;
+      document.getElementById('rme-alergi').value = alergi || 'Tidak Ada';
+      document.getElementById('patient-search-results').style.display = 'none';
+      document.getElementById('input-search-pasien').value = noRM + ' - ' + nama;
+      showToast('Pasien ' + nama + ' dipilih.', 'success');
+    }
+
+    function handleGenerateAndPrintTicket() {
+      var nama = document.getElementById('rme-nama').value.trim();
+      var noRM = document.getElementById('rme-norm').value.trim();
+      var room = document.getElementById('rme-poli').value;
+      var antrian = document.getElementById('rme-noantrian').value.trim() || 'A-007';
+
+      if (!nama) { showToast('Nama pasien wajib diisi!', 'warning'); document.getElementById('rme-nama').focus(); return; }
+
+      if (isGoogleEnv) {
+        google.script.run
+          .withSuccessHandler(function(res) {
+            if (res && res.status === 'success') {
+              var tNo = res.noAntrian || antrian;
+              document.getElementById('rme-noantrian').value = tNo;
+              displayQueueTicketModal(tNo, nama, noRM, room);
+              showToast('Tiket antrian ' + tNo + ' diterbitkan.', 'success');
+            }
+          })
+          .registerNewQueue(nama, noRM, room);
+      } else {
+        displayQueueTicketModal(antrian, nama, noRM, room);
+        showToast('Tiket antrian diterbitkan (Mock)', 'success');
+      }
+    }
+
+    function displayQueueTicketModal(tNo, nama, noRM, room) {
+      document.getElementById('ticket-print-no').innerText = tNo;
+      document.getElementById('ticket-print-room').innerText = room;
+      document.getElementById('ticket-print-norm').innerText = noRM;
+      document.getElementById('ticket-print-patient').innerText = nama;
+      document.getElementById('ticket-print-time').innerText = new Date().toLocaleDateString();
+      document.getElementById('modal-queue-ticket').style.display = 'flex';
+    }
+
+    function addPrescriptionRow() {
+      var container = document.getElementById('prescription-container');
+      var id = 'rx-' + Date.now();
+      var div = document.createElement('div');
+      div.id = id;
+      div.style.display = 'grid'; div.style.gridTemplateColumns = '2fr 1fr 1.5fr auto'; div.style.gap = '10px'; div.style.alignItems = 'center';
+
+      var opts = '<option value="">-- Pilih Obat --</option>';
+      var list = appState.medicines && appState.medicines.length > 0 ? appState.medicines : mockMedicines;
+      for (var i = 0; i < list.length; i++) {
+        var m = list[i];
+        opts += '<option value="' + m.kode + '" data-nama="' + m.nama + '" data-harga="' + (m.harga || 0) + '">' + m.nama + ' (' + formatRupiah(m.harga) + ')</option>';
+      }
+
+      div.innerHTML = '<select class="form-control rx-med-select" required>' + opts + '</select>' +
+        '<input type="number" class="form-control rx-qty" min="1" value="1" placeholder="Qty" required>' +
+        '<input type="text" class="form-control rx-dosage" placeholder="Dosis (3x1)">' +
+        '<button type="button" class="btn-zendenta btn-zendenta-outline btn-zendenta-sm" onclick="document.getElementById(\'' + id + '\').remove()" style="color:var(--danger);">&times;</button>';
+      container.appendChild(div);
+    }
+
+    function handleSaveRME() {
+      var tipe = document.getElementById('rme-tipe-pasien').value;
+      var noRM = document.getElementById('rme-norm').value.trim();
+      var nama = document.getElementById('rme-nama').value.trim();
+      var alamat = document.getElementById('rme-alamat').value.trim();
+      var alergi = document.getElementById('rme-alergi').value.trim();
+      var pemeriksa = document.getElementById('rme-pemeriksa').value;
+      var tindakan = document.getElementById('rme-tindakan').value.trim();
+      var antrian = document.getElementById('rme-noantrian').value.trim();
+      var poli = document.getElementById('rme-poli').value;
+
+      if (!pemeriksa) { showToast('Pilih tenaga medis pemeriksa!', 'error'); return; }
+
+      var rxRows = document.querySelectorAll('#prescription-container > div');
+      var prescriptions = [], rxStrings = [];
+      for (var i = 0; i < rxRows.length; i++) {
+        var sel = rxRows[i].querySelector('.rx-med-select');
+        var qty = parseInt(rxRows[i].querySelector('.rx-qty').value, 10) || 1;
+        var dos = rxRows[i].querySelector('.rx-dosage').value.trim() || '3x1';
+        if (sel.value) {
+          var opt = sel.options[sel.selectedIndex];
+          var mName = opt.getAttribute('data-nama');
+          prescriptions.push({ kode: sel.value, qty: qty, nama: mName, dosis: dos });
+          rxStrings.push(mName + ' (' + qty + 'x - ' + dos + ')');
+        }
+      }
+
+      var payload = {
+        tipePasien: tipe, noRM: noRM, noAntrian: antrian, ruangPoli: poli,
+        namaPasien: nama, alamat: alamat, riwayatAlergi: alergi,
+        pemeriksa: pemeriksa, profesiPemeriksa: 'Medis',
+        anamnesaTindakan: tindakan, prescriptions: prescriptions,
+        resepObatString: rxStrings.join(', ') || 'Tanpa Resep'
+      };
+
+      showToast('Menyimpan rekam medis...', 'warning');
+      if (isGoogleEnv) {
+        google.script.run
+          .withSuccessHandler(function(res) {
+            if (res && res.status === 'success') {
+              showToast(res.message, 'success');
+              resetFormRME();
+              initApp();
+            }
+          })
+          .submitRekamMedis(payload);
+      } else {
+        setTimeout(function() { showToast('Rekam medis tersimpan (Mock)', 'success'); resetFormRME(); }, 500);
+      }
+    }
+
+    function resetFormRME() {
+      document.getElementById('form-rme').reset();
+      document.getElementById('prescription-container').innerHTML = '';
+      setPatientType('baru');
+      addPrescriptionRow();
+    }
+
+    function setAskepType(type) {
+      document.getElementById('askep-type-val').value = type;
+      document.getElementById('btn-askep-kebidanan').className = type === 'kebidanan' ? 'toggle-btn active' : 'toggle-btn';
+      document.getElementById('btn-askep-keperawatan').className = type === 'keperawatan' ? 'toggle-btn active' : 'toggle-btn';
+      populateExaminersForAskep(type === 'kebidanan' ? 'Bidan' : 'Perawat');
+    }
+
+    function handleSelectAskepPatient(val) { if (!val) return; }
+    function handleSaveAskep() {
+      var pat = document.getElementById('askep-patient-select').value;
+      if (!pat) { showToast('Pilih pasien!', 'error'); return; }
+      var parts = pat.split('|');
+      var newRec = {
+        id: 'CPPT-' + Date.now(), waktu: new Date().toLocaleString(),
+        shift: document.getElementById('askep-shift').value, noRM: parts[0], nama: parts[1],
+        ruangan: document.getElementById('askep-ruangan').value, jenis: document.getElementById('askep-type-val').value === 'kebidanan' ? 'Kebidanan' : 'Keperawatan',
+        pemeriksa: document.getElementById('askep-pemeriksa').value, profesi: 'Medis',
+        ttv: 'TD: ' + (document.getElementById('askep-td').value || '120/80') + ' | N: ' + (document.getElementById('askep-nadi').value || '80'),
+        soap: 'S: ' + document.getElementById('askep-s').value + ' | O: ' + document.getElementById('askep-o').value + ' | A: ' + document.getElementById('askep-a').value + ' | P: ' + document.getElementById('askep-p').value,
+        status: 'Terverifikasi'
+      };
+      mockAskepHistory.unshift(newRec);
+      showToast('Asuhan CPPT berhasil disimpan!', 'success');
+      document.getElementById('form-askep').reset();
+      loadRiwayatCPPT();
+      switchTab('riwayat-cppt');
+    }
+
+    function loadRiwayatCPPT() { handleFilterCPPT(); }
+    function setCPPTFilter(type) {
+      appState.cpptFilterType = type;
+      document.getElementById('filter-cppt-all').className = type === 'all' ? 'toggle-btn active' : 'toggle-btn';
+      document.getElementById('filter-cppt-kebidanan').className = type === 'Kebidanan' ? 'toggle-btn active' : 'toggle-btn';
+      document.getElementById('filter-cppt-keperawatan').className = type === 'Keperawatan' ? 'toggle-btn active' : 'toggle-btn';
+      handleFilterCPPT();
+    }
+    function handleFilterCPPT() {
+      var kw = (document.getElementById('cppt-quick-search').value || '').toLowerCase().trim();
+      var type = appState.cpptFilterType;
+      var list = mockAskepHistory.filter(function(item) {
+        var matchT = (type === 'all' || item.jenis.toLowerCase() === type.toLowerCase());
+        var matchK = (!kw || item.nama.toLowerCase().indexOf(kw) !== -1 || item.noRM.toLowerCase().indexOf(kw) !== -1 || item.pemeriksa.toLowerCase().indexOf(kw) !== -1);
+        return matchT && matchK;
+      });
+      renderCPPTCards(list);
+    }
+    function renderCPPTCards(list) {
+      var container = document.getElementById('cppt-list-container');
+      document.getElementById('badge-cppt-counter').innerText = list.length + ' Catatan';
+      if (!list || list.length === 0) { container.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-subtle);">Tidak ada catatan CPPT.</div>'; return; }
+      var html = '';
+      for (var i = 0; i < list.length; i++) {
+        var item = list[i];
+        var isKeb = item.jenis === 'Kebidanan';
+        html += '<div style="background:#ffffff; border:1px solid var(--border-color); border-radius:var(--radius-md); padding:16px 20px;">' +
+          '<div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;">' +
+          '<div style="display:flex; align-items:center; gap:10px;"><span class="status-pill ' + (isKeb ? 'partially' : 'complete') + '">' + item.jenis + '</span><strong>' + item.nama + '</strong><span style="color:var(--primary); font-weight:700;">' + item.noRM + '</span><span>📍 ' + item.ruangan + '</span></div>' +
+          '<div><button class="btn-zendenta btn-zendenta-outline btn-zendenta-sm" onclick="openCPPTDetail(\'' + item.id + '\')">Detail</button> <button class="btn-zendenta btn-zendenta-primary btn-zendenta-sm" onclick="openPatientCPPTReport(\'' + item.noRM + '\', \'' + item.nama.replace(/'/g, "\\'") + '\')">🖨️ Cetak PDF</button></div></div>' +
+          '<div style="font-size:0.8rem; color:var(--text-muted);">TTV: ' + item.ttv + ' • Petugas: ' + item.pemeriksa + '</div></div>';
+      }
+      container.innerHTML = html;
+    }
+
+    function openCPPTDetail(id) {
+      var item = mockAskepHistory.filter(function(x) { return x.id === id; })[0];
+      if (!item) return;
+      document.getElementById('modal-cppt-id').innerText = item.id;
+      document.getElementById('modal-cppt-patient').innerText = item.nama + ' (' + item.noRM + ')';
+      document.getElementById('modal-cppt-room').innerText = item.ruangan;
+      document.getElementById('modal-cppt-time').innerText = item.waktu + ' • ' + item.shift;
+      document.getElementById('modal-cppt-author').innerText = item.pemeriksa;
+      document.getElementById('modal-cppt-ttv').innerText = item.ttv;
+      var soap = item.soap || '';
+      document.getElementById('modal-cppt-s').innerText = (soap.match(/S:\s*([^|]+)/) || [])[1] || '-';
+      document.getElementById('modal-cppt-o').innerText = (soap.match(/O:\s*([^|]+)/) || [])[1] || '-';
+      document.getElementById('modal-cppt-a').innerText = (soap.match(/A:\s*([^|]+)/) || [])[1] || '-';
+      document.getElementById('modal-cppt-p').innerText = (soap.match(/P:\s*(.+)$/) || [])[1] || '-';
+      document.getElementById('modal-detail-cppt').style.display = 'flex';
+    }
+
+    function openPatientCPPTReport(noRM, name) {
+      document.getElementById('print-pdf-norm').innerText = noRM;
+      document.getElementById('print-pdf-patient-name').innerText = name;
+      document.getElementById('print-pdf-room').innerText = 'Rawat Inap';
+      document.getElementById('print-pdf-footer-date').innerText = new Date().toLocaleDateString();
+      document.getElementById('print-pdf-dpjp-name').innerText = '( Tim Medis Penanggung Jawab )';
+      
+      var tbody = document.getElementById('print-pdf-cppt-tbody');
+      var html = '';
+      for (var i = 0; i < mockAskepHistory.length; i++) {
+        if (mockAskepHistory[i].noRM === noRM) {
+          var r = mockAskepHistory[i];
+          html += '<tr><td>' + r.waktu + '</td><td>' + r.pemeriksa + '</td><td>' + r.soap + '</td><td>' + r.ttv + '</td><td style="text-align:center;">✓</td></tr>';
+        }
+      }
+      tbody.innerHTML = html || '<tr><td colspan="5" style="text-align:center;">Tidak ada data.</td></tr>';
+      document.getElementById('modal-print-patient-cppt').style.display = 'flex';
+    }
+
+    function handlePatientPickerChange(val) {
+      if (!val) return;
+      var p = val.split('|');
+      openPatientCPPTReport(p[0], p[1]);
+      document.getElementById('cppt-patient-print-picker').value = '';
+    }
+
+    function loadPendingBilling() {
+      if (isGoogleEnv) {
+        google.script.run
+          .withSuccessHandler(function(res) { if (res && res.status === 'success') renderPendingBillingTable(res.data); })
+          .getPendingBilling();
+      } else {
+        renderPendingBillingTable([{ idKunjungan: 'RME-001', noRM: 'RM-000103', namaPasien: 'An. Salsa Bella', pemeriksa: 'Bd. Hani', estimasiObat: 30000, defaultJasaMedis: 35000, alamat: 'Loano' }]);
+      }
+    }
+    function renderPendingBillingTable(list) {
+      var tbody = document.getElementById('kasir-pending-tbody');
+      document.getElementById('badge-pending-kasir').innerText = list.length + ' Pasien';
+      if (!list || list.length === 0) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Semua lunas.</td></tr>'; return; }
+      var html = '';
+      for (var i = 0; i < list.length; i++) {
+        var b = list[i];
+        html += '<tr><td>' + b.idKunjungan + '</td><td>' + b.noRM + '</td><td><strong>' + b.namaPasien + '</strong></td><td>' + b.pemeriksa + '</td><td style="color:var(--primary); font-weight:700;">' + formatRupiah(b.estimasiObat) + '</td><td>' + formatRupiah(b.defaultJasaMedis) + '</td><td style="text-align:center;"><button class="btn-zendenta btn-zendenta-primary btn-zendenta-sm" onclick="openPaymentModal(\'' + b.idKunjungan + '\', \'' + b.noRM + '\', \'' + b.namaPasien.replace(/'/g, "\\'") + '\', ' + b.defaultJasaMedis + ', ' + b.estimasiObat + ', \'-eri\')">Bayar</button></td></tr>';
+      }
+      tbody.innerHTML = html;
+    }
+
+    function openPaymentModal(id, rm, nama, tindakan, obat, rincian) {
+      document.getElementById('pay-id-kunjungan').value = id;
+      document.getElementById('pay-norm').value = rm;
+      document.getElementById('pay-patient-name').value = nama + ' (' + rm + ')';
+      document.getElementById('pay-fee-tindakan').value = tindakan;
+      document.getElementById('pay-fee-obat').value = obat;
+      document.getElementById('pay-rincian-obat-string').value = rincian;
+      calculateCashierTotal();
+      document.getElementById('modal-kasir-pay').style.display = 'flex';
+    }
+
+    function calculateCashierTotal() {
+      var t = parseInt(document.getElementById('pay-fee-tindakan').value, 10) || 0;
+      var o = parseInt(document.getElementById('pay-fee-obat').value, 10) || 0;
+      var total = t + o;
+      var paid = parseInt(document.getElementById('pay-amount-paid').value, 10) || total;
+      document.getElementById('pay-grand-total').value = formatRupiah(total);
+      document.getElementById('pay-change-amount').value = formatRupiah(Math.max(0, paid - total));
+    }
+
+    function processPayment() {
+      var id = document.getElementById('pay-id-kunjungan').value;
+      var rm = document.getElementById('pay-norm').value;
+      var nama = document.getElementById('pay-patient-name').value.split('(')[0].trim();
+      var t = parseInt(document.getElementById('pay-fee-tindakan').value, 10) || 0;
+      var o = parseInt(document.getElementById('pay-fee-obat').value, 10) || 0;
+      var total = t + o;
+      var paid = parseInt(document.getElementById('pay-amount-paid').value, 10) || total;
+
+      var payload = {
+        idKunjungan: id, noRM: rm, namaPasien: nama, totalTindakan: t, totalObat: o,
+        grandTotal: total, uangBayar: paid, kembalian: Math.max(0, paid - total),
+        metodeBayar: document.getElementById('pay-method').value, petugasKasir: 'Kasir', rincianObat: '-'
+      };
+
+      if (isGoogleEnv) {
+        google.script.run
+          .withSuccessHandler(function(res) {
+            if (res && res.status === 'success') {
+              showToast('Pembayaran sukses!', 'success');
+              closeModal('modal-kasir-pay');
+              displayPrintedReceipt(res.noInvoice, rm, nama, t, o, total, paid, res.tanggal);
+              loadPendingBilling(); loadBillingHistory();
+            }
+          })
+          .submitPaymentKasir(payload);
+      } else {
+        showToast('Pembayaran berhasil (Mock)', 'success');
+        closeModal('modal-kasir-pay');
+        displayPrintedReceipt('INV-001', rm, nama, t, o, total, paid, new Date().toLocaleDateString());
+        loadPendingBilling();
+      }
+    }
+
+    function displayPrintedReceipt(inv, rm, nama, t, o, total, paid, tgl) {
+      document.getElementById('rec-invoice').innerText = inv;
+      document.getElementById('rec-date').innerText = tgl;
+      document.getElementById('rec-norm').innerText = rm;
+      document.getElementById('rec-patient').innerText = nama;
+      document.getElementById('rec-tindakan').innerText = formatRupiah(t);
+      document.getElementById('rec-obat').innerText = formatRupiah(o);
+      document.getElementById('rec-total').innerText = formatRupiah(total);
+      document.getElementById('modal-receipt').style.display = 'flex';
+    }
+
+    function loadBillingHistory() {
+      if (isGoogleEnv) {
+        google.script.run
+          .withSuccessHandler(function(res) { if (res && res.status === 'success') renderKasirHistoryTable(res.data); })
+          .getBillingHistoryPaginated(1, 10, '');
+      } else {
+        renderKasirHistoryTable([{ noInvoice: 'INV-001', tanggal: '12/09/2026', namaPasien: 'Ny. Siti Rahma', noRM: 'RM-000101', totalTindakan: 40000, totalObat: 40000, grandTotal: 80000, metodeBayar: 'Tunai', statusBayar: 'Lunas' }]);
+      }
+    }
+    function renderKasirHistoryTable(list) {
+      var tbody = document.getElementById('kasir-history-tbody');
+      if (!list || list.length === 0) { tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;">Belum ada riwayat.</td></tr>'; return; }
+      var html = '';
+      for (var i = 0; i < list.length; i++) {
+        var k = list[i];
+        html += '<tr><td><strong>' + k.noInvoice + '</strong></td><td>' + k.tanggal + '</td><td><strong>' + k.namaPasien + '</strong><div style="font-size:0.75rem; color:var(--primary);">' + k.noRM + '</div></td><td>' + formatRupiah(k.totalTindakan) + '</td><td>' + formatRupiah(k.totalObat) + '</td><td><strong style="color:var(--primary);">' + formatRupiah(k.grandTotal) + '</strong></td><td>' + k.metodeBayar + '</td><td><span class="status-pill complete">' + k.statusBayar + '</span></td><td style="text-align:center;"><button class="btn-zendenta btn-zendenta-outline btn-zendenta-sm" onclick="displayPrintedReceipt(\'' + k.noInvoice + '\', \'' + k.noRM + '\', \'' + k.namaPasien.replace(/'/g, "\\'") + '\', ' + k.totalTindakan + ', ' + k.totalObat + ', ' + k.grandTotal + ', ' + k.uangBayar + ', \'' + k.tanggal + '\')">Kwitansi</button></td></tr>';
+      }
+      tbody.innerHTML = html;
+    }
+    function handleSearchKasir() { loadBillingHistory(); }
+
+    function loadRMEHistory() {
+      var kw = document.getElementById('rme-search-input') ? document.getElementById('rme-search-input').value.trim() : '';
+      if (isGoogleEnv) {
+        google.script.run
+          .withSuccessHandler(function(res) { if (res && res.status === 'success') renderRMEHistoryTable(res.data); })
+          .withFailureHandler(function(err) { renderRMEHistoryTableFallback(kw); })
+          .getRMEHistoryPaginated(1, 10, kw);
+      } else {
+        renderRMEHistoryTableFallback(kw);
+      }
+    }
+    function renderRMEHistoryTableFallback(kw) {
+      var list = mockRMEHistory;
+      if (kw) {
+        list = list.filter(function(x) {
+          return x.noRM.toLowerCase().indexOf(kw.toLowerCase()) !== -1 || x.nama.toLowerCase().indexOf(kw.toLowerCase()) !== -1 || x.pemeriksa.toLowerCase().indexOf(kw) !== -1;
+        });
+      } else {
+        list = list.slice(0, 7);
+      }
+      renderRMEHistoryTable(list);
+    }
+    function renderRMEHistoryTable(list) {
+      var tbody = document.getElementById('rme-history-tbody');
+      document.getElementById('rme-total-count').innerText = list.length + ' Data Ditampilkan';
+      if (!list || list.length === 0) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:20px;">Tidak ada rekam medis.</td></tr>'; return; }
+      var html = '';
+      for (var i = 0; i < list.length; i++) {
+        var r = list[i];
+        html += '<tr><td><strong>' + r.idKunjungan + '</strong></td><td><span class="status-pill complete">' + r.noRM + '</span></td><td>' + r.tanggal + '</td><td><strong>' + r.nama + '</strong></td><td>' + r.pemeriksa + '</td><td>' + r.tindakan + '</td><td>' + r.resep + '</td><td><span class="status-pill complete">' + r.status + '</span></td></tr>';
+      }
+      tbody.innerHTML = html;
+    }
+    function handleSearchRME() { loadRMEHistory(); }
+
+    function loadTodayQueue(silent) {
+      if (isGoogleEnv) {
+        google.script.run
+          .withSuccessHandler(function(res) { if (res && res.status === 'success') renderQueueDisplay(res.activeQueue, res.queueList, silent); })
+          .getTodayQueue();
+      } else {
+        renderQueueDisplay({ noAntrian: 'A-003', namaPasien: 'An. Salsa Bella', ruangPoli: 'Poli Umum' }, [
+          { noAntrian: 'A-001', namaPasien: 'Ny. Siti Rahma', ruangPoli: 'Poli KIA', status: 'Selesai' },
+          { noAntrian: 'A-002', namaPasien: 'Tn. Bambang Sutrisno', ruangPoli: 'Ruang Tindakan', status: 'Selesai' },
+          { noAntrian: 'A-003', namaPasien: 'An. Salsa Bella', ruangPoli: 'Poli Umum', status: 'Diperiksa' },
+          { noAntrian: 'A-004', namaPasien: 'Ny. Wahyuni Astuti', ruangPoli: 'Poli KIA', status: 'Menunggu' }
+        ], silent);
+      }
+    }
+    function renderQueueDisplay(active, list, silent) {
+      if (list) appState.queueList = list;
+      if (active) {
+        document.getElementById('display-call-no').innerText = active.noAntrian;
+        document.getElementById('display-call-patient').innerText = active.namaPasien;
+        document.getElementById('display-call-room').innerText = active.ruangPoli;
+      }
+      var tbody = document.getElementById('queue-tbody');
+      if (!list || list.length === 0) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Belum ada antrian.</td></tr>'; return; }
+      var html = '';
+      for (var i = 0; i < list.length; i++) {
+        var q = list[i];
+        var badge = q.status === 'Diperiksa' ? 'partially' : (q.status === 'Selesai' ? 'complete' : 'pending');
+        html += '<tr><td><strong>' + q.noAntrian + '</strong></td><td>' + q.namaPasien + '</td><td>' + q.ruangPoli + '</td><td><span class="status-pill ' + badge + '">' + q.status + '</span></td><td><button class="btn-zendenta btn-zendenta-outline btn-zendenta-sm" onclick="callSpecificQueue(\'' + q.noAntrian + '\')">Panggil</button></td></tr>';
+      }
+      tbody.innerHTML = html;
+    }
+
+    var audioCtx = null;
+    function playCallBell(cb) {
+      try {
+        var ctx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+        audioCtx = ctx;
+        if (ctx.state === 'suspended') ctx.resume();
+        var now = ctx.currentTime, notes = [392, 493.88, 587.33, 783.99];
+        for (var i = 0; i < notes.length; i++) {
+          var osc = ctx.createOscillator(), gain = ctx.createGain();
+          osc.type = 'sine'; osc.frequency.setValueAtTime(notes[i], now + (i * 0.28));
+          gain.gain.setValueAtTime(0.0001, now + (i * 0.28));
+          gain.gain.exponentialRampToValueAtTime(0.3, now + (i * 0.28) + 0.04);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + (i * 0.28) + 0.35);
+          osc.connect(gain); gain.connect(ctx.destination);
+          osc.start(now + (i * 0.28)); osc.stop(now + (i * 0.28) + 0.35);
+        }
+        setTimeout(function() { if (cb) cb(); }, 1600);
+      } catch (e) { if (cb) cb(); }
+    }
+
+    function speakIndonesian(txt) {
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(txt);
+      u.lang = 'id-ID'; u.rate = 0.95;
+      window.speechSynthesis.speak(u);
+    }
+
+    function announceQueue(no, nama, poli) {
+      playCallBell(function() {
+        var cleanNo = no.replace(/([A-Za-z]+)-0*(\d+)/, '$1, nomor $2');
+        speakIndonesian('Nomor antrian ' + cleanNo + ', atas nama ' + nama + ', silakan menuju ke ' + poli);
+      });
+    }
+
+    function callNextQueue() {
+      var next = (appState.queueList || []).filter(function(q) { return q.status === 'Menunggu'; })[0];
+      if (next) {
+        next.status = 'Diperiksa';
+        document.getElementById('display-call-no').innerText = next.noAntrian;
+        document.getElementById('display-call-patient').innerText = next.namaPasien;
+        document.getElementById('display-call-room').innerText = next.ruangPoli;
+        renderQueueDisplay(next, appState.queueList);
+        if (isGoogleEnv) google.script.run.updateQueueStatus(next.noAntrian, 'Diperiksa', next.ruangPoli);
+        announceQueue(next.noAntrian, next.namaPasien, next.ruangPoli);
+        showToast('Memanggil ' + next.noAntrian, 'info');
+      } else {
+        showToast('Tidak ada antrian menunggu.', 'warning');
+      }
+    }
+
+    function markCurrentQueueDone() {
+      var no = document.getElementById('display-call-no').innerText.trim();
+      var nama = document.getElementById('display-call-patient').innerText.trim();
+      if (isGoogleEnv) google.script.run.updateQueueStatus(no, 'Selesai');
+      speakIndonesian('Pemeriksaan pasien ' + nama + ' selesai. Terima kasih.');
+      showToast('Antrian ' + no + ' selesai!', 'success');
+      loadTodayQueue();
+    }
+
+    function callSpecificQueue(no) {
+      var target = null;
+      for (var i = 0; i < appState.queueList.length; i++) {
+        if (appState.queueList[i].noAntrian === no) { target = appState.queueList[i]; target.status = 'Diperiksa'; break; }
+      }
+      if (target) {
+        document.getElementById('display-call-no').innerText = target.noAntrian;
+        document.getElementById('display-call-patient').innerText = target.namaPasien;
+        document.getElementById('display-call-room').innerText = target.ruangPoli;
+        renderQueueDisplay(target, appState.queueList);
+        if (isGoogleEnv) google.script.run.updateQueueStatus(target.noAntrian, 'Diperiksa', target.ruangPoli);
+        announceQueue(target.noAntrian, target.namaPasien, target.ruangPoli);
+      }
+    }
+
+    function loadAnalytics() {
+      renderTrendChart([14, 22, 28, 25, 34, 40, 38, 45, 42, 12, 6, 0]);
+    }
+    function renderTrendChart(data) {
+      var svg = document.getElementById('trend-svg');
+      if (!svg) return;
+      var w = 800, h = 240, max = Math.max.apply(null, data) || 10;
+      var pts = [];
+      for (var i = 0; i < data.length; i++) {
+        pts.push({ x: 30 + (i * 70), y: h - 30 - ((data[i] / max) * 180) });
+      }
+      var d = 'M ' + pts[0].x + ' ' + pts[0].y;
+      for (var j = 1; j < pts.length; j++) d += ' L ' + pts[j].x + ' ' + pts[j].y;
+      svg.innerHTML = '<path d="' + d + '" fill="none" stroke="#2563eb" stroke-width="3"/>';
+    }
+
+    function showToast(msg, type) {
+      var wrap = document.getElementById('toast-wrap');
+      var t = document.createElement('div');
+      t.className = 'toast-pill';
+      t.style.borderLeftColor = type === 'error' ? '#ef4444' : (type === 'success' ? '#10b981' : '#2563eb');
+      t.innerHTML = '<span>' + (type === 'success' ? '✅' : (type === 'error' ? '❌' : 'ℹ️')) + '</span> <span>' + msg + '</span>';
+      wrap.appendChild(t);
+      setTimeout(function() { t.remove(); }, 3500);
+    }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    function quickAddAction() { switchTab('input-rme'); }
+    function handleGlobalSearch(val) { if (appState.activeTab === 'gudang-obat') { document.getElementById('obat-search-input').value = val; loadWarehouseStock(); } }
+  </script>
+</body>
+</html>
